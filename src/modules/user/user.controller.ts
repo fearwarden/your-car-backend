@@ -4,6 +4,4 @@ import RESTResponse from "../../utils/RESTResponse";
 
 export class UserController {
   static prisma: PrismaClient = new PrismaClient();
-
-  static async register(req: Request, res: Response) {}
 }
