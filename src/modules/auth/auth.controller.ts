@@ -75,4 +75,18 @@ export class AuthController {
       .status(201)
       .send(RESTResponse.createResponse(true, HTTPResponses.OK, {}));
   }
+
+  static async logout(req: Request, res: Response) {
+    req.logout((error) => {
+      if (error)
+        return res
+          .status(401)
+          .send(
+            RESTResponse.createResponse(false, HTTPResponses.BAD_REQUEST, {})
+          );
+      return res
+        .status(201)
+        .send(RESTResponse.createResponse(true, HTTPResponses.OK, {}));
+    });
+  }
 }

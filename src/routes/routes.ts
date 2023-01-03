@@ -27,6 +27,13 @@ export function initializeRoutes(app: any): Application {
       }
     );
 
+    router.group("/auth", (subRouter: any) => {
+      // Subroutes under auth
+      subRouter.post("/logout", (req: Request, res: Response) => {
+        AuthController.logout(req, res);
+      });
+    });
+
     router.group("/user", (subRouter: any) => {
       // Subroutes under user
     });
