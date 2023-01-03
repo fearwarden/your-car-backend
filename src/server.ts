@@ -21,7 +21,7 @@ app.use(
     secret: process.env.SESSION_SECRET!,
     store: new sessionFileStore({ path: "./sessions" }),
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: true,
     cookie: { maxAge: 1000 * 60 * 60 * 24 * 1, sameSite: "lax" }, // 1 day expiration
   })
 );
