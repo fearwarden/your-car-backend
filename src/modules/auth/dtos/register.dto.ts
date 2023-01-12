@@ -7,6 +7,9 @@ export const RegisterDto = z
     confirmPassword: z.string().min(8),
     firstName: z.string().min(2),
     lastName: z.string().min(2),
+    phone: z.string(),
+    address: z.string(),
+    profilePicture: z.string().optional(),
   })
   .superRefine(({ confirmPassword, password }, ctx) => {
     if (confirmPassword !== password) {

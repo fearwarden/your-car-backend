@@ -51,6 +51,12 @@ export class AuthController {
         );
     }
     const hashedPassword = await hashPassword(payload.password);
+    let profilePicture: string;
+    if (!payload.profilePicture) {
+      profilePicture = "/uploads/profiles/avatar.webp";
+    } else {
+      profilePicture = payload.profilePicture;
+    }
     try {
       const user = await this.prisma.user.create({
         data: {
@@ -58,6 +64,9 @@ export class AuthController {
           password: hashedPassword,
           firstName: payload.firstName,
           lastName: payload.lastName,
+          phone: payload.phone,
+          address: payload.address,
+          profilePicture: profilePicture,
         },
       });
     } catch (error) {

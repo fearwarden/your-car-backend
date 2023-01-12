@@ -5,12 +5,17 @@ import session from "express-session";
 import passport from "passport";
 import { initializeRoutes } from "./routes/routes";
 import FileStore from "session-file-store";
+import path from "path";
 
 dotenv.config();
 
 const sessionFileStore: FileStore.FileStore = FileStore(session);
 
 const app: Express = express();
+
+// Statiac path
+app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
+
 // Body parser
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
