@@ -16,6 +16,9 @@ model User {
   password String
   firstName String @db.VarChar(255) @map("first_name")
   lastName String @db.VarChar(255) @map("last_name")
+  phone String @db.VarChar(20)
+  profilePicture String? @default("../src/assets/img/avatar.webp") @map("profile_picture")
+  address String @db.VarChar(255)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   @@map("users")
