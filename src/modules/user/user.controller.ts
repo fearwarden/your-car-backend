@@ -6,6 +6,12 @@ import { HTTPResponses } from "../../constants/HTTPResponses";
 export class UserController {
   static prisma: PrismaClient = new PrismaClient();
 
+  /**
+   * Returns the user's personal information.
+   * @param {Request} req - Request 
+   * @param {Response} res - Response
+   * @returns The user's personal information.
+   */
   static async personalInfo(req: Request, res: Response): Promise<Response> {
     const user: any = req.user;
     let payload: any;
