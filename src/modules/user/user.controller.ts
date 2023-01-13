@@ -4,4 +4,8 @@ import RESTResponse from "../../utils/RESTResponse";
 
 export class UserController {
   static prisma: PrismaClient = new PrismaClient();
+
+  static async personalInfo(req: Request, res: Response): Promise<Response> {
+    return res.send(req.user);
+  }
 }
