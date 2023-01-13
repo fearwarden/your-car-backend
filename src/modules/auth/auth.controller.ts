@@ -85,6 +85,11 @@ export class AuthController {
       .send(RESTResponse.createResponse(true, HTTPResponses.OK, {}));
   }
 
+  /**
+   * It logs out the user
+   * @param {Request} req - Request - The request object
+   * @param {Response} res - Response - The response object that will be sent back to the client
+   */
   static async logout(req: Request, res: Response) {
     req.logout((error) => {
       if (error)
