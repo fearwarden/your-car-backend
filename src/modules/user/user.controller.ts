@@ -2,13 +2,16 @@ import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import RESTResponse from "../../utils/RESTResponse";
 import { HTTPResponses } from "../../constants/HTTPResponses";
+import { changePasswordDto } from "./dtos/changePassword.dto";
+import * as bcrypt from "bcrypt";
+import { hashPassword } from "../../utils/helperFunctions";
 
 export class UserController {
   static prisma: PrismaClient = new PrismaClient();
 
   /**
    * Returns the user's personal information.
-   * @param {Request} req - Request 
+   * @param {Request} req - Request
    * @param {Response} res - Response
    * @returns The user's personal information.
    */
@@ -42,5 +45,76 @@ export class UserController {
         address: payload.address,
       })
     );
+  }
+
+  static async changePassword(req: Request, res: Response): Promise<Response> {
+    const payload = req.body;
+    const userId: any = req.user;
+    let user: any;
+    try {
+      changePasswordDto.parse(payload);
+    } catch (error) {
+      return res
+        .status(401)
+        .send(
+          RESTResponse.createResponse(false, HTTPResponses.INVALID_DATA, {})
+        );
+    }
+    try {
+      user = await this.prisma.user.findUnique({
+        where: {
+          id: userId.id,
+        },
+      });
+    } catch (error) {
+      return res
+        .status(500)
+        .send(
+          RESTResponse.createResponse(
+            false,
+            HTTPResponses.INTERNAL_SERVER_ERROR,
+            {}
+          )
+        );
+    }
+    const passMatch = await bcrypt.compare(
+      payload.currentPassword,
+      user.password
+    );
+    if (!passMatch) {
+      return res
+        .status(401)
+        .send(
+          RESTResponse.createResponse(
+            false,
+            HTTPResponses.INCORRECT_PASSWORD,
+            {}
+          )
+        );
+    }
+    const hashedPassword = await hashPassword(payload.password);
+    try {
+      const changedPassword = await this.prisma.user.update({
+        where: {
+          id: userId.id,
+        },
+        data: {
+          password: hashedPassword,
+        },
+      });
+    } catch (error) {
+      return res
+        .status(500)
+        .send(
+          RESTResponse.createResponse(
+            false,
+            HTTPResponses.INTERNAL_SERVER_ERROR,
+            {}
+          )
+        );
+    }
+    return res
+      .status(201)
+      .send(RESTResponse.createResponse(true, HTTPResponses.OK, {}));
   }
 }

@@ -36,9 +36,20 @@ export function initializeRoutes(app: any): Application {
 
     router.group("/user", (subRouter: any) => {
       // Subroutes under user
-      subRouter.get("/personal-info", isLoggedIn, (req: Request, res: Response) => {
-        UserController.personalInfo(req, res);
-      })
+      subRouter.get(
+        "/personal-info",
+        isLoggedIn,
+        (req: Request, res: Response) => {
+          UserController.personalInfo(req, res);
+        }
+      );
+      subRouter.post(
+        "/change-password",
+        isLoggedIn,
+        (req: Request, res: Response) => {
+          UserController.changePassword(req, res);
+        }
+      );
     });
   });
 

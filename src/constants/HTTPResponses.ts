@@ -6,4 +6,5 @@ export class HTTPResponses {
   static readonly INTERNAL_SERVER_ERROR = "Internal server error.";
   static readonly INVALID_USER = "Invalid user credentials.";
   static readonly UNAUTHORIZED = "Unauthorized.";
+  static readonly INCORRECT_PASSWORD = "Incorrect password.";
 }
