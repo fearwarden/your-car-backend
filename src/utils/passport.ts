@@ -18,7 +18,7 @@ passport.use(
   new Strategy({ usernameField: "email" }, async (email, password, done) => {
     const user = await prisma.user.findUnique({ where: { email } });
     const response = HTTPResponses.INVALID_USER;
-    
+
     if (!user) return done(response);
     else if (user) {
       const passMatch = await bcrypt.compare(password, user.password);
@@ -47,8 +47,8 @@ passport.deserializeUser(async (id: string | number, done) => {
   });
   if (!payload) return done("No user to deserialize");
   let user: DeserializedUser = {
-      id: payload?.id,
-  }
+    id: payload?.id,
+  };
   return done(null, user);
 });
 
