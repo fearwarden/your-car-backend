@@ -47,6 +47,13 @@ export class UserController {
     );
   }
 
+  /**
+   * It takes a request, checks if the data is valid, checks if the current password is correct, hashes
+   * the new password, and updates the user's password
+   * @param {Request} req - Request - the request object
+   * @param {Response} res - Response - the response object
+   * @returns The response is being returned.
+   */
   static async changePassword(req: Request, res: Response): Promise<Response> {
     const payload = req.body;
     const userId: any = req.user;
