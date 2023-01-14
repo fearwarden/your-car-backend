@@ -124,4 +124,8 @@ export class UserController {
       .status(201)
       .send(RESTResponse.createResponse(true, HTTPResponses.OK, {}));
   }
+
+  static async forgotPassword(req: Request, res: Response): Promise<Response> {
+    return res.send("ok");
+  }
 }

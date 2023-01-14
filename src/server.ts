@@ -32,7 +32,7 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
-import "./utils/passport";
+import "./modules/auth/strategy/passport";
 
 const port = process.env.PORT || 3000;
 

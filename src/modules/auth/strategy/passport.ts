@@ -2,11 +2,11 @@ import passport, { use } from "passport";
 import * as bcrypt from "bcrypt";
 import { NextFunction, Request, Response } from "express";
 import { Strategy } from "passport-local";
-import prisma from "./db";
-import { HTTPResponses } from "../constants/HTTPResponses";
-import { User } from "../modules/user/user.model";
-import { DeserializedUser } from "../modules/auth/dtos/deserializedUser.dto";
-import RESTResponse from "./RESTResponse";
+import prisma from "../../../utils/db";
+import { HTTPResponses } from "../../../constants/HTTPResponses";
+import { User } from "../../user/user.model";
+import { DeserializedUser } from "../dtos/deserializedUser.dto";
+import RESTResponse from "../../../utils/RESTResponse";
 /**
  * Authentication strategy (Username & Password)
  * Since we are using email and password we have to rename the username field to what we use.

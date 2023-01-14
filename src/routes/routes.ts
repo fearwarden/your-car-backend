@@ -3,7 +3,7 @@ import { Application, Request, Response } from "express";
 import { UserController } from "../modules/user/user.controller";
 import { AuthController } from "../modules/auth/auth.controller";
 import passport from "passport";
-import { isLoggedIn } from "../utils/passport";
+import { isLoggedIn } from "../modules/auth/strategy/passport";
 import RESTResponse from "../utils/RESTResponse";
 import { HTTPResponses } from "../constants/HTTPResponses";
 
