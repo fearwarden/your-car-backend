@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import { template } from "./template";
 
 // create reusable transporter object using the default SMTP transport
 const transporter = nodemailer.createTransport({
@@ -11,4 +12,16 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// TODO: Implement sendMail(from, to, subject, link) function
+export async function sendMail(
+  from: string,
+  to: string,
+  subject: string,
+  link: string
+) {
+  await transporter.sendMail({
+    from: from,
+    to: to,
+    subject: subject,
+    html: template(to, link),
+  });
+}

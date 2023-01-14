@@ -5,6 +5,7 @@ import { HTTPResponses } from "../../constants/HTTPResponses";
 import { changePasswordDto } from "./dtos/changePassword.dto";
 import * as bcrypt from "bcrypt";
 import { hashPassword } from "../../utils/helperFunctions";
+import { sendMail } from "../../mailSystem/mailer";
 
 export class UserController {
   static prisma: PrismaClient = new PrismaClient();
@@ -126,6 +127,19 @@ export class UserController {
   }
 
   static async forgotPassword(req: Request, res: Response): Promise<Response> {
+    const { email } = req.body;
+    console.log(email);
+    try {
+      sendMail(
+        process.env.SMTP_USER!,
+        email,
+        "Forgot Password",
+        "http://localhost:3000/test"
+      );
+    } catch (error) {
+      console.log(error);
+      return res.send("error");
+    }
     return res.send("ok");
   }
 }

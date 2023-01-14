@@ -50,6 +50,9 @@ export function initializeRoutes(app: any): Application {
           UserController.changePassword(req, res);
         }
       );
+      subRouter.post("/forgot-password", (req: Request, res: Response) => {
+        UserController.forgotPassword(req, res);
+      });
     });
   });
 
