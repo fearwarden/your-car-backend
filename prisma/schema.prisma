@@ -31,6 +31,10 @@ model Post {
   id String @id
   description String @db.VarChar(500)
   car Car?
+  price Price?
+  mediaInPost MediaInPost?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
   @@map("posts")
 }
 
@@ -39,24 +43,6 @@ model Car {
   name String
   country String
   used Boolean
-  price Price?
-  specification Specification?
-  post Post @relation(fields: [postId], references: [id])
-  postId String @unique
-  @@map("cars")
-}
-
-model Price {
-  id String @id
-  price String
-  currency String
-  car Car @relation(fields: [carId], references: [id])
-  carId String @unique // relation scalar field (used in the `@relation` attribute above)
-  @@map("prices")
-}
-
-model Specification {
-  id String @id
   year Int
   bodyType String @map("body_type")
   mileage String
@@ -66,9 +52,40 @@ model Specification {
   fuelType String @map("fuel_type")
   exteriorColor String @map("exterior_color")
   interiorColor String @map("interior_color")
-  car Car @relation(fields: [carId], references: [id])
-  carId String @unique // relation scalar field (used in the `@relation` attribute above)
-  @@map("specifications")
+  post Post @relation(fields: [postId], references: [id])
+  postId String @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  @@map("cars")
+}
+
+model Price {
+  id String @id
+  price String
+  currency String
+  fixed Boolean
+  post Post @relation(fields: [postId], references: [id])
+  postId String @unique @map("post_id") // relation scalar field (used in the `@relation` attribute above)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  @@map("prices")
+}
+
+model Media {
+  id String @id
+  path String
+  mediaInPost MediaInPost?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+}
+
+model MediaInPost {
+  post Post @relation(fields: [postId], references: [id])
+  postId String @unique @map("post_id")
+  media Media @relation(fields: [mediaId], references: [id])
+  mediaId String @unique @map("media_id")
+  priority String
+  @@map("media_in_post")
 }
 
 model ForgotPassword {
