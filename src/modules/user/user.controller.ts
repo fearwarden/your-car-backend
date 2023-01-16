@@ -1,6 +1,6 @@
 // Packges
 import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, User, ForgotPassword } from "@prisma/client";
 import { randomUUID } from "crypto";
 import * as bcrypt from "bcrypt";
 // DTOs
@@ -25,7 +25,7 @@ export class UserController {
    */
   static async personalInfo(req: Request, res: Response): Promise<Response> {
     const user: any = req.user;
-    let payload: any;
+    let payload: User | null;
     try {
       payload = await this.prisma.user.findUnique({
         where: {
@@ -46,11 +46,11 @@ export class UserController {
     }
     return res.status(201).send(
       RESTResponse.createResponse(true, HTTPResponses.OK, {
-        email: payload.email,
-        firstName: payload.firstName,
-        lastName: payload.lastName,
-        phone: payload.phone,
-        address: payload.address,
+        email: payload!.email,
+        firstName: payload!.firstName,
+        lastName: payload!.lastName,
+        phone: payload!.phone,
+        address: payload!.address,
       })
     );
   }
@@ -65,7 +65,7 @@ export class UserController {
   static async changePassword(req: Request, res: Response): Promise<Response> {
     const payload = req.body;
     const userId: any = req.user;
-    let user: any;
+    let user: User | null;
     try {
       changePasswordDto.parse(payload);
     } catch (error) {
@@ -94,7 +94,7 @@ export class UserController {
     }
     const passMatch = await bcrypt.compare(
       payload.currentPassword,
-      user.password
+      user!.password
     );
     if (!passMatch) {
       return res
@@ -151,7 +151,7 @@ export class UserController {
           RESTResponse.createResponse(false, HTTPResponses.INVALID_DATA, {})
         );
     }
-    let user: any;
+    let user: User | null;
     try {
       user = await this.prisma.user.findUnique({
         where: {
@@ -219,7 +219,7 @@ export class UserController {
           RESTResponse.createResponse(false, HTTPResponses.INVALID_DATA, {})
         );
     }
-    let forgotPassword: any;
+    let forgotPassword: ForgotPassword | null;
     try {
       forgotPassword = await this.prisma.forgotPassword.findUnique({
         where: {
