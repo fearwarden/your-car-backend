@@ -128,6 +128,13 @@ export class UserController {
       .send(RESTResponse.createResponse(true, HTTPResponses.OK, {}));
   }
 
+  /**
+   * It takes an email, checks if it exists in the database, generates a link, and sends email to user
+   * with link where user can change his password
+   * @param {Request} req - Request -&gt; The request object
+   * @param {Response} res - Response
+   * @returns A response object.
+   */
   static async forgotPassword(req: Request, res: Response): Promise<Response> {
     const { email } = req.body;
     try {
