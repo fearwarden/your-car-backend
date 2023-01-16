@@ -1,14 +1,18 @@
+// Packges
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import { randomUUID } from "crypto";
+import * as bcrypt from "bcrypt";
+// DTOs
+import { changePasswordDto } from "./dtos/changePassword.dto";
+import { resetPasswordDto } from "./dtos/resetPassword.dto";
+import { hashPassword } from "../../utils/helperFunctions";
+import { forgotPasswordDto } from "./dtos/forgotPassword.dto";
+//Helpers
 import RESTResponse from "../../utils/RESTResponse";
 import { HTTPResponses } from "../../constants/HTTPResponses";
-import { changePasswordDto } from "./dtos/changePassword.dto";
-import * as bcrypt from "bcrypt";
-import { hashPassword } from "../../utils/helperFunctions";
 import { sendMail } from "../../mailSystem/mailer";
-import { forgotPasswordDto } from "./dtos/forgotPassword.dto";
 import { generateLink } from "../../utils/helperFunctions";
-import { randomUUID } from "crypto";
 
 export class UserController {
   static prisma: PrismaClient = new PrismaClient();
@@ -193,5 +197,68 @@ export class UserController {
     return res
       .status(201)
       .send(RESTResponse.createResponse(true, HTTPResponses.OK, { link }));
+  }
+
+  static async resetPassword(req: Request, res: Response): Promise<Response> {
+    const { password, confirmPassword } = req.body;
+    const forgotPassId: string = req.params.id;
+    try {
+      resetPasswordDto.parse({ password, confirmPassword, forgotPassId });
+    } catch (error) {
+      return res
+        .status(401)
+        .send(
+          RESTResponse.createResponse(false, HTTPResponses.INVALID_DATA, {})
+        );
+    }
+    let forgotPassword: any;
+    try {
+      forgotPassword = await this.prisma.forgotPassword.findUnique({
+        where: {
+          id: forgotPassId,
+        },
+      });
+      if (!forgotPassword) {
+        return res
+          .status(400)
+          .send(
+            RESTResponse.createResponse(false, HTTPResponses.BAD_REQUEST, {})
+          );
+      }
+    } catch (error) {
+      return res
+        .status(500)
+        .send(
+          RESTResponse.createResponse(
+            false,
+            HTTPResponses.INTERNAL_SERVER_ERROR,
+            {}
+          )
+        );
+    }
+    try {
+      const hashedPassword = await hashPassword(password);
+      const user = await this.prisma.user.update({
+        where: {
+          id: forgotPassword.userId,
+        },
+        data: {
+          password: hashedPassword,
+        },
+      });
+    } catch (error) {
+      return res
+        .status(500)
+        .send(
+          RESTResponse.createResponse(
+            false,
+            HTTPResponses.INTERNAL_SERVER_ERROR,
+            {}
+          )
+        );
+    }
+    return res
+      .status(201)
+      .send(RESTResponse.createResponse(true, HTTPResponses.OK, {}));
   }
 }
