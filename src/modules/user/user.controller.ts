@@ -6,6 +6,8 @@ import { changePasswordDto } from "./dtos/changePassword.dto";
 import * as bcrypt from "bcrypt";
 import { hashPassword } from "../../utils/helperFunctions";
 import { sendMail } from "../../mailSystem/mailer";
+import { forgotPasswordDto } from "./dtos/forgotPassword.dto";
+import { generateLink } from "../../utils/helperFunctions";
 
 export class UserController {
   static prisma: PrismaClient = new PrismaClient();
@@ -128,18 +130,53 @@ export class UserController {
 
   static async forgotPassword(req: Request, res: Response): Promise<Response> {
     const { email } = req.body;
-    console.log(email);
     try {
-      sendMail(
-        process.env.SMTP_USER!,
-        email,
-        "Forgot Password",
-        "http://localhost:3000/test"
-      );
+      forgotPasswordDto.parse({ email });
+    } catch (error) {
+      return res
+        .status(401)
+        .send(
+          RESTResponse.createResponse(false, HTTPResponses.INVALID_DATA, {})
+        );
+    }
+    let user: any;
+    try {
+      user = await this.prisma.user.findUnique({
+        where: {
+          email: email,
+        },
+      });
+      if (!user) {
+        return res
+          .status(404)
+          .send(
+            RESTResponse.createResponse(
+              false,
+              HTTPResponses.USER_DOES_NOT_EXIST,
+              {}
+            )
+          );
+      }
+    } catch (error) {
+      return res
+        .status(500)
+        .send(
+          RESTResponse.createResponse(
+            false,
+            HTTPResponses.INTERNAL_SERVER_ERROR,
+            {}
+          )
+        );
+    }
+    const link = generateLink(user.id, "forgot-password");
+    try {
+      sendMail(process.env.SMTP_USER!, email, "Forgot Password", link);
     } catch (error) {
       console.log(error);
       return res.send("error");
     }
-    return res.send("ok");
+    return res
+      .status(201)
+      .send(RESTResponse.createResponse(true, HTTPResponses.OK, {}));
   }
 }
