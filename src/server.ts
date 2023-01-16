@@ -3,7 +3,8 @@ import dotenv from "dotenv";
 import express, { Express } from "express";
 import session from "express-session";
 import passport from "passport";
-import { initializeRoutes } from "./routes/routes";
+import { authRoutes } from "./routes/auth";
+import { userRoutes } from "./routes/user";
 import FileStore from "session-file-store";
 import path from "path";
 
@@ -36,7 +37,8 @@ import "./modules/auth/strategy/passport";
 
 const port = process.env.PORT || 3000;
 
-initializeRoutes(app);
+authRoutes(app);
+userRoutes(app);
 
 app.listen(port, () => {
   console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
