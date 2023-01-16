@@ -5,10 +5,7 @@ export async function hashPassword(password: string) {
   return bcrypt.hash(password, salt);
 }
 
-export function generateLink(id: number | string, action: string) {
-  if (typeof id === "number") {
-    id = id.toString();
-  }
+export function generateLink(id: string, action: string) {
   const link = `${process.env.WEBSITE_URL}/${action}/${id}`;
   return link;
 }

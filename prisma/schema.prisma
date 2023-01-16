@@ -19,7 +19,15 @@ model User {
   phone String @db.VarChar(20)
   profilePicture String @map("profile_picture")
   address String @db.VarChar(255)
+  forgotPassword ForgotPassword[]
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   @@map("users")
+}
+
+model ForgotPassword {
+  id String @id
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int @map("user_id")
+  @@map("forgot_password")
 }

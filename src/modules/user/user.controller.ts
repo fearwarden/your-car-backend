@@ -8,6 +8,7 @@ import { hashPassword } from "../../utils/helperFunctions";
 import { sendMail } from "../../mailSystem/mailer";
 import { forgotPasswordDto } from "./dtos/forgotPassword.dto";
 import { generateLink } from "../../utils/helperFunctions";
+import { randomUUID } from "crypto";
 
 export class UserController {
   static prisma: PrismaClient = new PrismaClient();
@@ -175,15 +176,22 @@ export class UserController {
           )
         );
     }
-    const link = generateLink(user.id, "forgot-password");
+    const forgotPasswordId = randomUUID();
+    const link = generateLink(forgotPasswordId, "forgot-password");
     try {
-      sendMail(process.env.SMTP_USER!, email, "Forgot Password", link);
+      const forgotPass = await this.prisma.forgotPassword.create({
+        data: {
+          id: forgotPasswordId,
+          userId: user.id,
+        },
+      });
+      //sendMail(process.env.SMTP_USER!, email, "Forgot Password", link);
     } catch (error) {
       console.log(error);
       return res.send("error");
     }
     return res
       .status(201)
-      .send(RESTResponse.createResponse(true, HTTPResponses.OK, {}));
+      .send(RESTResponse.createResponse(true, HTTPResponses.OK, { link }));
   }
 }
