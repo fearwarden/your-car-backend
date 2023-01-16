@@ -185,7 +185,7 @@ export class UserController {
           userId: user.id,
         },
       });
-      //sendMail(process.env.SMTP_USER!, email, "Forgot Password", link);
+      sendMail(process.env.SMTP_USER!, email, "Forgot Password", link);
     } catch (error) {
       console.log(error);
       return res.send("error");
