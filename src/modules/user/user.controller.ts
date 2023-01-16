@@ -199,6 +199,14 @@ export class UserController {
       .send(RESTResponse.createResponse(true, HTTPResponses.OK, { link }));
   }
 
+  /**
+   * It takes a password,a confirmation password and forgot password id from url, and if they match,
+   * it hashes the password and
+   * updates the user's password in the database
+   * @param {Request} req - Request, res: Response
+   * @param {Response} res - Response
+   * @returns A response object.
+   */
   static async resetPassword(req: Request, res: Response): Promise<Response> {
     const { password, confirmPassword } = req.body;
     const forgotPassId: string = req.params.id;
