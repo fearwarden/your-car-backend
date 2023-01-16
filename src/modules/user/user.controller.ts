@@ -24,12 +24,12 @@ export class UserController {
    * @returns The user's personal information.
    */
   static async personalInfo(req: Request, res: Response): Promise<Response> {
-    const user: any = req.user;
-    let payload: User | null;
+    const payload: any = req.user;
+    let user: User | null;
     try {
-      payload = await this.prisma.user.findUnique({
+      user = await this.prisma.user.findUnique({
         where: {
-          id: user.id,
+          id: payload.id,
         },
       });
     } catch (error) {
@@ -46,11 +46,11 @@ export class UserController {
     }
     return res.status(201).send(
       RESTResponse.createResponse(true, HTTPResponses.OK, {
-        email: payload!.email,
-        firstName: payload!.firstName,
-        lastName: payload!.lastName,
-        phone: payload!.phone,
-        address: payload!.address,
+        email: user!.email,
+        firstName: user!.firstName,
+        lastName: user!.lastName,
+        phone: user!.phone,
+        address: user!.address,
       })
     );
   }
