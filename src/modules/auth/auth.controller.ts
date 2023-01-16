@@ -1,6 +1,9 @@
-import { PrismaClient } from "@prisma/client";
+// Packages
 import { Request, Response } from "express";
+import { PrismaClient, User } from "@prisma/client";
+// DTOs
 import { RegisterDto } from "./dtos/register.dto";
+// Helpers
 import RESTResponse from "../../utils/RESTResponse";
 import { HTTPResponses } from "../../constants/HTTPResponses";
 import { hashPassword } from "../../utils/helperFunctions";
@@ -27,7 +30,7 @@ export class AuthController {
     }
 
     try {
-      const user = await this.prisma.user.findUnique({
+      const user: User | null = await this.prisma.user.findUnique({
         where: {
           email: payload.email,
         },
@@ -58,7 +61,7 @@ export class AuthController {
       profilePicture = payload.profilePicture;
     }
     try {
-      const user = await this.prisma.user.create({
+      const createdUser: User | null = await this.prisma.user.create({
         data: {
           email: payload.email,
           password: hashedPassword,
