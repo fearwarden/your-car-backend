@@ -25,6 +25,52 @@ model User {
   @@map("users")
 }
 
+// Post model ce imati vezu sa users, cars and reviews
+// zato pravimo poseban model post
+model Post {
+  id String @id
+  description String @db.VarChar(500)
+  car Car?
+  @@map("posts")
+}
+
+model Car {
+  id String @id
+  name String
+  country String
+  used Boolean
+  price Price?
+  specification Specification?
+  post Post @relation(fields: [postId], references: [id])
+  postId String @unique
+  @@map("cars")
+}
+
+model Price {
+  id String @id
+  price String
+  currency String
+  car Car @relation(fields: [carId], references: [id])
+  carId String @unique // relation scalar field (used in the `@relation` attribute above)
+  @@map("prices")
+}
+
+model Specification {
+  id String @id
+  year Int
+  bodyType String @map("body_type")
+  mileage String
+  drivetrain String
+  engine String
+  transmission String
+  fuelType String @map("fuel_type")
+  exteriorColor String @map("exterior_color")
+  interiorColor String @map("interior_color")
+  car Car @relation(fields: [carId], references: [id])
+  carId String @unique // relation scalar field (used in the `@relation` attribute above)
+  @@map("specifications")
+}
+
 model ForgotPassword {
   id String @id
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
