@@ -19,6 +19,7 @@ model User {
   phone String @db.VarChar(20)
   profilePicture String @map("profile_picture")
   address String @db.VarChar(255)
+  post Post[]
   forgotPassword ForgotPassword[]
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -33,6 +34,8 @@ model Post {
   car Car?
   price Price?
   mediaInPost MediaInPost?
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int @map("user_id")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   @@map("posts")

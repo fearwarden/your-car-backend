@@ -1,3 +1,3 @@
 export interface DeserializedUser {
-    id?: number;
-  }
+  id?: number;
+}
