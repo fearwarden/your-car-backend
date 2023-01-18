@@ -63,7 +63,7 @@ export class UserController {
    * It deletes a user from the database
    * @param {Request} req - Request - The request object
    * @param {Response} res - Response - The response object
-   * @returns The response is being returned.
+   * @returns The response object is being returned.
    */
   static async remove(req: Request, res: Response): Promise<Response> {
     const userId: any = req.user;
