@@ -8,6 +8,7 @@ import { changePasswordDto } from "./dtos/changePassword.dto";
 import { resetPasswordDto } from "./dtos/resetPassword.dto";
 import { hashPassword } from "../../utils/helperFunctions";
 import { forgotPasswordDto } from "./dtos/forgotPassword.dto";
+import { updateDto } from "./dtos/updateUser.dto";
 //Helpers
 import RESTResponse from "../../utils/RESTResponse";
 import { HTTPResponses } from "../../constants/HTTPResponses";
@@ -16,6 +17,41 @@ import { generateLink } from "../../utils/helperFunctions";
 
 export class UserController {
   static prisma: PrismaClient = new PrismaClient();
+
+  static async update(req: Request, res: Response): Promise<Response> {
+    const payload = req.body;
+    const userId: any = req.user;
+    try {
+      updateDto.parse(payload);
+    } catch (error) {
+      return res
+        .status(401)
+        .send(
+          RESTResponse.createResponse(false, HTTPResponses.INVALID_DATA, {})
+        );
+    }
+    try {
+      const user: User | null = await this.prisma.user.update({
+        where: {
+          id: userId.id,
+        },
+        data: payload,
+      });
+      return res
+        .status(201)
+        .send(RESTResponse.createResponse(true, HTTPResponses.OK, { user }));
+    } catch (error) {
+      return res
+        .status(500)
+        .send(
+          RESTResponse.createResponse(
+            false,
+            HTTPResponses.INTERNAL_SERVER_ERROR,
+            {}
+          )
+        );
+    }
+  }
 
   /**
    * Returns the user's personal information.

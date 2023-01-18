@@ -21,6 +21,9 @@ export function userRoutes(app: any): Application {
     router.post("/reset-password/:id", (req: Request, res: Response) => {
       UserController.resetPassword(req, res);
     });
+    router.post("/update", isLoggedIn, (req: Request, res: Response) => {
+      UserController.update(req, res);
+    });
   });
 
   return app;
