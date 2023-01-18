@@ -18,6 +18,12 @@ import { generateLink } from "../../utils/helperFunctions";
 export class UserController {
   static prisma: PrismaClient = new PrismaClient();
 
+  /**
+   * It updates a user's profile
+   * @param {Request} req - Request - The request object
+   * @param {Response} res - Response - The response object
+   * @returns The user object is being returned.
+   */
   static async update(req: Request, res: Response): Promise<Response> {
     const payload = req.body;
     const userId: any = req.user;
