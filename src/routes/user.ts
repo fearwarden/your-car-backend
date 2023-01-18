@@ -24,6 +24,9 @@ export function userRoutes(app: any): Application {
     router.post("/update", isLoggedIn, (req: Request, res: Response) => {
       UserController.update(req, res);
     });
+    router.delete("/remove", isLoggedIn, (req: Request, res: Response) => {
+      UserController.remove(req, res);
+    });
   });
 
   return app;
