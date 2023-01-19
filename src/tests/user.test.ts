@@ -1,41 +1,27 @@
-import { createUser, updateUser } from "./helpers/testFunctions";
 import { prismaMock } from "./config/singleton";
 import { User } from "@prisma/client";
+import { AuthController } from "../modules/auth/auth.controller";
+import { Request, Response } from "express";
 
-test("should create new user", async () => {
-  const user: User = {
-    id: 1,
-    email: "test@prisma.io",
-    password: "test1234",
-    firstName: "Test",
-    lastName: "Test",
-    phone: "123456789",
-    address: "test 14",
-    profilePicture: "test",
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
+const mockRequest = (body: any): Request => {
+  return {
+    body: { data: body },
+  } as Request;
+};
 
-  prismaMock.user.create.mockResolvedValue(user);
+const mockResponse = () => {
+  const res: any = {};
+  res.status = jest.fn().mockReturnValue(res);
+  res.send = jest.fn().mockReturnValue(res);
+  res.json = jest.fn().mockReturnValue(res);
+  return res;
+};
 
-  await expect(createUser(user)).resolves.toEqual(user);
+describe("register", () => {
+  test("should return 401 if data in not set", async () => {
+    const req = mockRequest({});
+    const res = mockResponse();
+    await AuthController.register(req, res);
+    expect(res.status).toHaveBeenCalledWith(401);
+  });
 });
-
-test("should update the user", async () => {
-  const user = {
-    id: 1,
-    email: "test@prisma.io",
-    password: "test1234",
-    firstName: "Test",
-    lastName: "Test",
-    phone: "123456789",
-    address: "test 14",
-    profilePicture: "test",
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
-
-  prismaMock.user.update.mockResolvedValue(user);
-
-  await expect(updateUser(user)).resolves.toEqual(user);
-})
