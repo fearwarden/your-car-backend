@@ -1,4 +1,4 @@
-import { createUser, updateUser } from "./helpers/function_without_context";
+import { createUser, updateUser } from "./helpers/testFunctions";
 import { prismaMock } from "./config/singleton";
 import { User } from "@prisma/client";
 
