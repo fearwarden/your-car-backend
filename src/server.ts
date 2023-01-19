@@ -35,7 +35,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 import "./modules/auth/strategy/passport";
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT === "test" ? 3001 : 3000;
 
 authRoutes(app);
 userRoutes(app);
@@ -43,3 +43,4 @@ userRoutes(app);
 app.listen(port, () => {
   console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
 });
+export default app;
