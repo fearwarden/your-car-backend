@@ -29,8 +29,11 @@ model User {
 // Post model ce imati vezu sa users, cars and reviews
 // zato pravimo poseban model post
 model Post {
-  id String @id
+  id String @id @default(uuid())
   description String @db.VarChar(500)
+  country String
+  year Int
+  mileage String
   car Car?
   price Price?
   mediaInPost MediaInPost?
@@ -42,15 +45,13 @@ model Post {
 }
 
 model Car {
-  id String @id
-  name String
-  country String
+  id String @id @default(uuid())
+  model String
   used Boolean
-  year Int
   bodyType String @map("body_type")
-  mileage String
   drivetrain String
   engine String
+  horsePower Int @map("horse_power")
   transmission String
   fuelType String @map("fuel_type")
   exteriorColor String @map("exterior_color")
@@ -63,7 +64,7 @@ model Car {
 }
 
 model Price {
-  id String @id
+  id String @id @default(uuid())
   price String
   currency String
   fixed Boolean
@@ -75,7 +76,7 @@ model Price {
 }
 
 model Media {
-  id String @id
+  id String @id @default(uuid())
   path String
   mediaInPost MediaInPost?
   createdAt DateTime @default(now()) @map("created_at")
@@ -83,6 +84,7 @@ model Media {
 }
 
 model MediaInPost {
+  id String @id @default(uuid())
   post Post @relation(fields: [postId], references: [id])
   postId String @unique @map("post_id")
   media Media @relation(fields: [mediaId], references: [id])
