@@ -47,6 +47,7 @@ model Post {
 
 model Car {
   id String @id @default(uuid())
+  brand String
   model String
   used Boolean
   bodyType String @map("body_type")

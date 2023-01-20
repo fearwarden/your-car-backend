@@ -3,7 +3,7 @@ import { cars } from "../src/resources/cars";
 
 const prisma = new PrismaClient();
 
-// In order to seed your database with cars.ts file run the followint cammand: npx prisma seed
+// In order to seed your database with cars.ts file run the followint cammand: npx prisma db seed
 async function main() {
   const payload = await prisma.car.createMany({
     data: cars,

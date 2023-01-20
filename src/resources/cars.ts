@@ -1,5 +1,6 @@
 export const cars = [
   {
+    brand: "Audi",
     model: "A4",
     used: true,
     bodyType: "Sedan",
@@ -12,6 +13,7 @@ export const cars = [
     interiorColor: "Black",
   },
   {
+    brand: "Audi",
     model: "A5",
     used: false,
     bodyType: "Coupe",
@@ -24,6 +26,7 @@ export const cars = [
     interiorColor: "Black",
   },
   {
+    brand: "Audi",
     model: "Q7",
     used: true,
     bodyType: "SUV",
@@ -36,6 +39,7 @@ export const cars = [
     interiorColor: "Beige",
   },
   {
+    brand: "Honda",
     model: "Civic",
     used: false,
     bodyType: "Sedan",
@@ -48,6 +52,7 @@ export const cars = [
     interiorColor: "Black",
   },
   {
+    brand: "Honda",
     model: "Accord",
     used: true,
     bodyType: "Sedan",
@@ -60,6 +65,7 @@ export const cars = [
     interiorColor: "Beige",
   },
   {
+    brand: "Toyota",
     model: "Camry",
     used: false,
     bodyType: "Sedan",
@@ -72,6 +78,7 @@ export const cars = [
     interiorColor: "Black",
   },
   {
+    brand: "Toyota",
     model: "Corolla",
     used: true,
     bodyType: "Sedan",
@@ -84,6 +91,7 @@ export const cars = [
     interiorColor: "Gray",
   },
   {
+    brand: "Subaru",
     model: "Impreza",
     used: false,
     bodyType: "Sedan",
@@ -96,6 +104,7 @@ export const cars = [
     interiorColor: "Black",
   },
   {
+    brand: "Subaru",
     model: "Legacy",
     used: true,
     bodyType: "Sedan",
@@ -108,6 +117,7 @@ export const cars = [
     interiorColor: "Gray",
   },
   {
+    brand: "KIA",
     model: "Optima",
     used: false,
     bodyType: "Sedan",
@@ -120,6 +130,7 @@ export const cars = [
     interiorColor: "Beige",
   },
   {
+    brand: "Hyundai",
     model: "Sonata",
     used: true,
     bodyType: "Sedan",
@@ -132,6 +143,7 @@ export const cars = [
     interiorColor: "Beige",
   },
   {
+    brand: "Ford",
     model: "Fusion",
     used: false,
     bodyType: "Sedan",
@@ -144,6 +156,7 @@ export const cars = [
     interiorColor: "Black",
   },
   {
+    brand: "Ford",
     model: "Taurus",
     used: true,
     bodyType: "Sedan",
@@ -156,6 +169,7 @@ export const cars = [
     interiorColor: "Gray",
   },
   {
+    brand: "Volvo",
     model: "S60",
     used: false,
     bodyType: "Sedan",
@@ -168,6 +182,7 @@ export const cars = [
     interiorColor: "Black",
   },
   {
+    brand: "Volvo",
     model: "S90",
     used: true,
     bodyType: "Sedan",
