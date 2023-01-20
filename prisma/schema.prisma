@@ -34,9 +34,10 @@ model Post {
   country String
   year Int
   mileage String
-  car Car?
   price Price?
   mediaInPost MediaInPost?
+  car Car @relation(fields: [carId], references: [id])
+  carId String @unique
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId Int @map("user_id")
   createdAt DateTime @default(now()) @map("created_at")
@@ -56,8 +57,7 @@ model Car {
   fuelType String @map("fuel_type")
   exteriorColor String @map("exterior_color")
   interiorColor String @map("interior_color")
-  post Post @relation(fields: [postId], references: [id])
-  postId String @unique
+  post Post?
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   @@map("cars")
