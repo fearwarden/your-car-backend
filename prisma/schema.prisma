@@ -101,7 +101,7 @@ model ForgotPassword {
 model media {
   id          String       @id @default(uuid())
   path        String
-  created_at  DateTime     @default(now())
-  updated_at  DateTime     @default(now())
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
   mediaInPost MediaInPost?
 }
