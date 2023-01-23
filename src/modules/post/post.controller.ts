@@ -1,6 +1,6 @@
 // Packges
 import { Request, Response } from "express";
-import { Car, Media, Post, Price, PrismaClient } from "@prisma/client";
+import { Post, Price, PrismaClient } from "@prisma/client";
 import { createPostDto } from "./dto/createPost.dto";
 import RESTResponse from "../../utils/RESTResponse";
 import { HTTPResponses } from "../../constants/HTTPResponses";
