@@ -34,12 +34,13 @@ model Post {
   country String
   year Int
   mileage String
-  price Price?
-  mediaInPost MediaInPost?
+  price Price @relation(fields: [priceId], references: [id])
+  priceId String @unique @map("price_id") // relation scalar field (used in the `@relation` attribute above)
   car Car @relation(fields: [carId], references: [id])
   carId String @unique
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId Int @map("user_id")
+  mediaInPost MediaInPost[]
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   @@map("posts")
@@ -69,8 +70,7 @@ model Price {
   price String
   currency String
   fixed Boolean
-  post Post @relation(fields: [postId], references: [id])
-  postId String @unique @map("post_id") // relation scalar field (used in the `@relation` attribute above)
+  post Post?
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   @@map("prices")
@@ -87,10 +87,10 @@ model Media {
 model MediaInPost {
   id String @id @default(uuid())
   post Post @relation(fields: [postId], references: [id])
-  postId String @unique @map("post_id")
+  postId String @map("post_id")
   media Media @relation(fields: [mediaId], references: [id])
   mediaId String @unique @map("media_id")
-  priority String
+  priority Int
   @@map("media_in_post")
 }
 
