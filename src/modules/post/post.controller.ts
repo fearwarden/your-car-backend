@@ -10,6 +10,7 @@ export class PostController {
   static prisma: PrismaClient = new PrismaClient();
 
   // TODO: Treba ubaciti logiku i implementaciju za priority slika
+  // TODO: Treba implementirati i upload slika (cuvati u uploads folderu)
   static async create(req: Request, res: Response): Promise<Response> {
     const payload = req.body;
     const userId: any = req.user;
