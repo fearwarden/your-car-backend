@@ -8,6 +8,9 @@ export function postRouter(app: any): Application {
     router.post("/create", isLoggedIn, (req: Request, res: Response) => {
       PostController.create(req, res);
     });
+    router.get("/:id", isLoggedIn, (req: Request, res: Response) => {
+      PostController.getPost(req, res);
+    });
   });
 
   return app;

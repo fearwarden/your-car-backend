@@ -5,6 +5,7 @@ import { createPostDto } from "./dto/createPost.dto";
 import RESTResponse from "../../utils/RESTResponse";
 import { HTTPResponses } from "../../constants/HTTPResponses";
 import { MediaInPostInterface, MediaInterface } from "./dto/media.interface";
+import { getPostDto } from "./dto/getPost.dto";
 
 export class PostController {
   static prisma: PrismaClient = new PrismaClient();
@@ -137,5 +138,103 @@ export class PostController {
     return res
       .status(201)
       .send(RESTResponse.createResponse(true, HTTPResponses.OK, { post }));
+  }
+
+  static async getPost(req: Request, res: Response) {
+    const postId = req.params.id;
+    try {
+      getPostDto.parse({ postId });
+    } catch (error) {
+      return res
+        .status(401)
+        .send(
+          RESTResponse.createResponse(false, HTTPResponses.INVALID_DATA, {})
+        );
+    }
+
+    let post;
+    try {
+      post = await this.prisma.post.findUnique({
+        where: {
+          id: postId,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      return res
+        .status(500)
+        .send(
+          RESTResponse.createResponse(
+            false,
+            HTTPResponses.INTERNAL_SERVER_ERROR,
+            {}
+          )
+        );
+    }
+    let car;
+    try {
+      car = await this.prisma.car.findUnique({
+        where: {
+          id: post?.carId,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      return res
+        .status(500)
+        .send(
+          RESTResponse.createResponse(
+            false,
+            HTTPResponses.INTERNAL_SERVER_ERROR,
+            {}
+          )
+        );
+    }
+    let mediaInPost;
+    try {
+      mediaInPost = await this.prisma.mediaInPost.findMany({
+        where: {
+          postId: post?.id,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      return res
+        .status(500)
+        .send(
+          RESTResponse.createResponse(
+            false,
+            HTTPResponses.INTERNAL_SERVER_ERROR,
+            {}
+          )
+        );
+    }
+    let medias;
+    try {
+      medias = await this.prisma.$transaction(
+        mediaInPost.map((media) =>
+          this.prisma.media.findUnique({ where: { id: media.mediaId } })
+        )
+      );
+    } catch (error) {
+      console.log(error);
+      return res
+        .status(500)
+        .send(
+          RESTResponse.createResponse(
+            false,
+            HTTPResponses.INTERNAL_SERVER_ERROR,
+            {}
+          )
+        );
+    }
+    return res.status(203).send(
+      RESTResponse.createResponse(true, HTTPResponses.OK, {
+        post,
+        car,
+        mediaInPost,
+        medias,
+      })
+    );
   }
 }
