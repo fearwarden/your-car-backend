@@ -140,6 +140,23 @@ export class PostController {
       .send(RESTResponse.createResponse(true, HTTPResponses.OK, { post }));
   }
 
+  /**
+   * It gets a post from the database and returns it with the car, mediaInPost and medias associated
+   * with it.
+   * </code>
+   * @param {Request} req - Request, res: Response
+   * @param {Response} res - Response - Express response object
+   * @returns {
+   *   "success": true,
+   *   "message": "OK",
+   *   "data": {
+   *     "post": {...},
+   *     "car": {...},
+   *     "mediaInPost": {...},
+   *      "media": {...}
+   *    }
+   * }
+   */
   static async getPost(req: Request, res: Response) {
     const postId = req.params.id;
     try {
