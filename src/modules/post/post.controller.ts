@@ -6,6 +6,7 @@ import RESTResponse from "../../utils/RESTResponse";
 import { HTTPResponses } from "../../constants/HTTPResponses";
 import { MediaInPostInterface, MediaInterface } from "./dto/media.interface";
 import { getPostDto } from "./dto/getPost.dto";
+import { allPostsObject } from "../../utils/helperFunctions";
 
 export class PostController {
   static prisma: PrismaClient = new PrismaClient();
@@ -265,7 +266,7 @@ export class PostController {
           )
         );
     }
-    return res.status(203).send(
+    return res.status(202).send(
       RESTResponse.createResponse(true, HTTPResponses.OK, {
         post,
         price,
@@ -274,5 +275,95 @@ export class PostController {
         medias,
       })
     );
+  }
+
+  // TODO: Implement pagination
+  static async getAllPosts(req: Request, res: Response): Promise<Response> {
+    let posts: any;
+    try {
+      posts = await this.prisma.post.findMany();
+    } catch (error) {
+      console.log(error);
+      return res
+        .status(500)
+        .send(
+          RESTResponse.createResponse(
+            false,
+            HTTPResponses.INTERNAL_SERVER_ERROR,
+            {}
+          )
+        );
+    }
+    let prices;
+    try {
+      prices = await this.prisma.price.findMany();
+    } catch (error) {
+      console.log(error);
+      return res
+        .status(500)
+        .send(
+          RESTResponse.createResponse(
+            false,
+            HTTPResponses.INTERNAL_SERVER_ERROR,
+            {}
+          )
+        );
+    }
+    let cars: any = [];
+    try {
+      const allCars = await this.prisma.car.findMany();
+      for (let i = 0; i < posts.length; i++) {
+        for (let j = 0; j < allCars.length; j++) {
+          if (posts[i].carId === allCars[j].id) {
+            cars.push(allCars[j]);
+          }
+        }
+      }
+    } catch (error) {
+      console.log(error);
+      return res
+        .status(500)
+        .send(
+          RESTResponse.createResponse(
+            false,
+            HTTPResponses.INTERNAL_SERVER_ERROR,
+            {}
+          )
+        );
+    }
+    let mediaInPosts;
+    try {
+      mediaInPosts = await this.prisma.mediaInPost.findMany();
+    } catch (error) {
+      console.log(error);
+      return res
+        .status(500)
+        .send(
+          RESTResponse.createResponse(
+            false,
+            HTTPResponses.INTERNAL_SERVER_ERROR,
+            {}
+          )
+        );
+    }
+    let medias;
+    try {
+      medias = await this.prisma.media.findMany();
+    } catch (error) {
+      console.log(error);
+      return res
+        .status(500)
+        .send(
+          RESTResponse.createResponse(
+            false,
+            HTTPResponses.INTERNAL_SERVER_ERROR,
+            {}
+          )
+        );
+    }
+    const data = allPostsObject(posts, cars, prices, mediaInPosts, medias);
+    return res
+      .status(202)
+      .send(RESTResponse.createResponse(true, HTTPResponses.OK, data));
   }
 }

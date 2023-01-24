@@ -82,7 +82,7 @@ model MediaInPost {
   priority Int
   id       String @id @default(uuid())
   postId   String @map("post_id")
-  media    media  @relation(fields: [mediaId], references: [id])
+  media    Media  @relation(fields: [mediaId], references: [id])
   post     Post   @relation(fields: [postId], references: [id])
 
   @@index([postId], map: "media_in_post_post_id_fkey")
@@ -98,10 +98,12 @@ model ForgotPassword {
   @@map("forgot_password")
 }
 
-model media {
+model Media {
   id          String       @id @default(uuid())
   path        String
   createdAt   DateTime     @default(now()) @map("created_at")
   updatedAt   DateTime     @updatedAt @map("updated_at")
   mediaInPost MediaInPost?
+
+  @@map("medias")
 }
