@@ -141,7 +141,7 @@ export class PostController {
   }
 
   /**
-   * It gets a post from the database and returns it with the car, mediaInPost and medias associated
+   * It gets a post from the database and returns it with the price, car, mediaInPost and medias associated
    * with it.
    * </code>
    * @param {Request} req - Request, res: Response
@@ -151,13 +151,14 @@ export class PostController {
    *   "message": "OK",
    *   "data": {
    *     "post": {...},
+   *     "price": {...},
    *     "car": {...},
    *     "mediaInPost": {...},
    *      "media": {...}
    *    }
    * }
    */
-  static async getPost(req: Request, res: Response) {
+  static async getPost(req: Request, res: Response): Promise<Response> {
     const postId = req.params.id;
     try {
       getPostDto.parse({ postId });
@@ -174,6 +175,25 @@ export class PostController {
       post = await this.prisma.post.findUnique({
         where: {
           id: postId,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      return res
+        .status(500)
+        .send(
+          RESTResponse.createResponse(
+            false,
+            HTTPResponses.INTERNAL_SERVER_ERROR,
+            {}
+          )
+        );
+    }
+    let price;
+    try {
+      price = await this.prisma.price.findUnique({
+        where: {
+          id: post?.priceId,
         },
       });
     } catch (error) {
@@ -248,6 +268,7 @@ export class PostController {
     return res.status(203).send(
       RESTResponse.createResponse(true, HTTPResponses.OK, {
         post,
+        price,
         car,
         mediaInPost,
         medias,
