@@ -11,6 +11,7 @@ export function generateLink(id: string, action: string) {
   return link;
 }
 
+// TODO: finish filtering function
 export function allPostsObject(
   posts: Post[],
   cars: Car[],
