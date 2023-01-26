@@ -10,20 +10,17 @@ import { hashPassword } from "../../utils/helperFunctions";
 import { AppError } from "../../utils/AppError";
 import { HTTPCodeStatus } from "../../constants/HTTPCodeStatus";
 
-export class AuthController {
-  static prisma: PrismaClient = new PrismaClient();
+// Prisma instantiation
+const prisma: PrismaClient = new PrismaClient();
 
+export class AuthController {
   /**
    * It takes a payload with user credentials and creates a user.
    * @param {Request} req - Request - The request object with email, password, confirmPassword, firstName, lastName
    * @param {Response} res - Response - the response object w
    * @returns The response is being returned.
    */
-  static async register(
-    req: Request,
-    res: Response,
-    prisma: PrismaClient
-  ): Promise<Response> {
+  static async register(req: Request, res: Response): Promise<Response> {
     const payload = req.body;
     const validation = RegisterDto.safeParse(payload);
     if (!validation.success) throw validation.error;
