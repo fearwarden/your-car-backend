@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import prisma from "../tests/config/client";
+import prisma from "../database/client";
 
 export const safeParse =
   (controller: any) =>
