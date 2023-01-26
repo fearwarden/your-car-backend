@@ -4,13 +4,12 @@ import { AuthController } from "../modules/auth/auth.controller";
 import passport from "passport";
 import RESTResponse from "../utils/RESTResponse";
 import { HTTPResponses } from "../constants/HTTPResponses";
+import { safeParse } from "../utils/safeParse";
 
 export function authRoutes(app: any): Application {
   app.group("/api/v1", (router: any) => {
     //Login and register
-    router.post("/register", (req: Request, res: Response) => {
-      AuthController.register(req, res);
-    });
+    router.post("/register", safeParse(AuthController.register));
 
     router.post(
       "/login",
