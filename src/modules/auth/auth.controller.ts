@@ -10,7 +10,7 @@ import { hashPassword } from "../../utils/helperFunctions";
 import { AppError } from "../../utils/AppError";
 import { HTTPCodeStatus } from "../../constants/HTTPCodeStatus";
 
-// Prisma instantiation
+// Prisma client instantiation
 const prisma: PrismaClient = new PrismaClient();
 
 export class AuthController {
