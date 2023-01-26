@@ -35,12 +35,16 @@ app.use(passport.initialize());
 app.use(passport.session());
 import "./modules/auth/strategy/passport";
 import { postRouter } from "./routes/post";
+import { errorHandler } from "./middleware/errorHandler";
 
 const port = process.env.PORT === "test" ? 3001 : 3000;
 
 authRoutes(app);
 userRoutes(app);
 postRouter(app);
+
+// error handler middleware
+app.use(errorHandler);
 
 app.listen(port, () => {
   console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
