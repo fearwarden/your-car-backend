@@ -7,6 +7,8 @@ import { RegisterDto } from "./dtos/register.dto";
 import RESTResponse from "../../utils/RESTResponse";
 import { HTTPResponses } from "../../constants/HTTPResponses";
 import { hashPassword } from "../../utils/helperFunctions";
+import { AppError } from "../../utils/AppError";
+import { HTTPCodeStatus } from "../../constants/HTTPCodeStatus";
 
 export class AuthController {
   static prisma: PrismaClient = new PrismaClient();
@@ -17,41 +19,22 @@ export class AuthController {
    * @param {Response} res - Response - the response object w
    * @returns The response is being returned.
    */
-  static async register(req: Request, res: Response): Promise<Response> {
+  static async register(
+    req: Request,
+    res: Response,
+    prisma: PrismaClient
+  ): Promise<Response> {
     const payload = req.body;
-    try {
-      RegisterDto.parse(payload);
-    } catch (error) {
-      return res
-        .status(401)
-        .send(
-          RESTResponse.createResponse(false, HTTPResponses.INVALID_DATA, {})
-        );
-    }
+    const validation = RegisterDto.safeParse(payload);
+    if (!validation.success) throw validation.error;
 
-    try {
-      const user: User | null = await this.prisma.user.findUnique({
-        where: {
-          email: payload.email,
-        },
-      });
-      if (user) {
-        return res
-          .status(409)
-          .send(
-            RESTResponse.createResponse(false, HTTPResponses.USER_EXIST, {})
-          );
-      }
-    } catch (error) {
-      return res
-        .status(500)
-        .send(
-          RESTResponse.createResponse(
-            false,
-            HTTPResponses.INTERNAL_SERVER_ERROR,
-            {}
-          )
-        );
+    const user: User | null = await prisma.user.findUnique({
+      where: {
+        email: payload.email,
+      },
+    });
+    if (user) {
+      throw new AppError(HTTPResponses.USER_EXIST, HTTPCodeStatus.USER_EXIST);
     }
     const hashedPassword = await hashPassword(payload.password);
     let profilePicture: string;
@@ -60,29 +43,18 @@ export class AuthController {
     } else {
       profilePicture = payload.profilePicture;
     }
-    try {
-      const createdUser: User | null = await this.prisma.user.create({
-        data: {
-          email: payload.email,
-          password: hashedPassword,
-          firstName: payload.firstName,
-          lastName: payload.lastName,
-          phone: payload.phone,
-          address: payload.address,
-          profilePicture: profilePicture,
-        },
-      });
-    } catch (error) {
-      return res
-        .status(500)
-        .send(
-          RESTResponse.createResponse(
-            false,
-            HTTPResponses.INTERNAL_SERVER_ERROR,
-            {}
-          )
-        );
-    }
+
+    const createdUser: User | null = await prisma.user.create({
+      data: {
+        email: payload.email,
+        password: hashedPassword,
+        firstName: payload.firstName,
+        lastName: payload.lastName,
+        phone: payload.phone,
+        address: payload.address,
+        profilePicture: profilePicture,
+      },
+    });
     return res
       .status(201)
       .send(RESTResponse.createResponse(true, HTTPResponses.OK, {}));
