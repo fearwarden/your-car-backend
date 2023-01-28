@@ -23,9 +23,7 @@ export function userRoutes(app: any): Application {
       UserController.resetPassword(req, res);
     });
     router.post("/update", isLoggedIn, safeParse(UserController.update));
-    router.delete("/remove", isLoggedIn, (req: Request, res: Response) => {
-      UserController.remove(req, res);
-    });
+    router.delete("/remove", isLoggedIn, safeParse(UserController.remove));
   });
 
   return app;

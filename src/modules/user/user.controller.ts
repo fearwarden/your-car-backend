@@ -51,23 +51,11 @@ export class UserController {
    */
   static async remove(req: Request, res: Response): Promise<Response> {
     const userId: any = req.user;
-    try {
-      const deletedUser: User | null = await prisma.user.delete({
-        where: {
-          id: userId.id,
-        },
-      });
-    } catch (error) {
-      return res
-        .status(500)
-        .send(
-          RESTResponse.createResponse(
-            false,
-            HTTPResponses.INTERNAL_SERVER_ERROR,
-            {}
-          )
-        );
-    }
+    const deletedUser: User | null = await prisma.user.delete({
+      where: {
+        id: userId.id,
+      },
+    });
     return res
       .status(202)
       .send(RESTResponse.createResponse(true, HTTPResponses.OK, {}));
