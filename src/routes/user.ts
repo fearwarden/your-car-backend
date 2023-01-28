@@ -6,9 +6,7 @@ import { safeParse } from "../utils/safeParse";
 
 export function userRoutes(app: any): Application {
   app.group("/api/v1/user", (router: any) => {
-    router.get("/personal-info", isLoggedIn, (req: Request, res: Response) => {
-      UserController.personalInfo(req, res);
-    });
+    router.get("/personal-info", isLoggedIn, safeParse(UserController.personalInfo));
     router.post(
       "/change-password",
       isLoggedIn,

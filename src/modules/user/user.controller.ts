@@ -69,25 +69,11 @@ export class UserController {
    */
   static async personalInfo(req: Request, res: Response): Promise<Response> {
     const payload: any = req.user;
-    let user: User | null;
-    try {
-      user = await prisma.user.findUnique({
-        where: {
-          id: payload.id,
-        },
-      });
-    } catch (error) {
-      console.log(error);
-      return res
-        .status(500)
-        .send(
-          RESTResponse.createResponse(
-            false,
-            HTTPResponses.INTERNAL_SERVER_ERROR,
-            {}
-          )
-        );
-    }
+    const user: User | null = await prisma.user.findUnique({
+      where: {
+        id: payload.id,
+      },
+    });
     return res.status(201).send(
       RESTResponse.createResponse(true, HTTPResponses.OK, {
         email: user!.email,
