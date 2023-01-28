@@ -14,9 +14,11 @@ import RESTResponse from "../../utils/RESTResponse";
 import { HTTPResponses } from "../../constants/HTTPResponses";
 import { sendMail } from "../../mailSystem/mailer";
 import { generateLink } from "../../utils/helperFunctions";
+import prisma from "../../database/client";
+import { AppError } from "../../utils/AppError";
+import { HTTPCodeStatus } from "../../constants/HTTPCodeStatus";
 
 export class UserController {
-  static prisma: PrismaClient = new PrismaClient();
 
   /**
    * It updates a user's profile
@@ -27,36 +29,18 @@ export class UserController {
   static async update(req: Request, res: Response): Promise<Response> {
     const payload = req.body;
     const userId: any = req.user;
-    try {
-      updateDto.parse(payload);
-    } catch (error) {
-      return res
-        .status(401)
-        .send(
-          RESTResponse.createResponse(false, HTTPResponses.INVALID_DATA, {})
-        );
-    }
-    try {
-      const user: User | null = await this.prisma.user.update({
-        where: {
-          id: userId.id,
-        },
-        data: payload,
-      });
-      return res
-        .status(202)
-        .send(RESTResponse.createResponse(true, HTTPResponses.OK, { user }));
-    } catch (error) {
-      return res
-        .status(500)
-        .send(
-          RESTResponse.createResponse(
-            false,
-            HTTPResponses.INTERNAL_SERVER_ERROR,
-            {}
-          )
-        );
-    }
+
+    const validation = updateDto.safeParse(payload);
+    if (!validation.success) throw validation.error;
+    const user: User | null = await prisma.user.update({
+      where: {
+        id: userId.id,
+      },
+      data: payload,
+    });
+    return res
+      .status(202)
+      .send(RESTResponse.createResponse(true, HTTPResponses.OK, { user }));
   }
 
   /**
@@ -68,7 +52,7 @@ export class UserController {
   static async remove(req: Request, res: Response): Promise<Response> {
     const userId: any = req.user;
     try {
-      const deletedUser: User | null = await this.prisma.user.delete({
+      const deletedUser: User | null = await prisma.user.delete({
         where: {
           id: userId.id,
         },
@@ -99,7 +83,7 @@ export class UserController {
     const payload: any = req.user;
     let user: User | null;
     try {
-      user = await this.prisma.user.findUnique({
+      user = await prisma.user.findUnique({
         where: {
           id: payload.id,
         },
@@ -148,7 +132,7 @@ export class UserController {
         );
     }
     try {
-      user = await this.prisma.user.findUnique({
+      user = await prisma.user.findUnique({
         where: {
           id: userId.id,
         },
@@ -181,7 +165,7 @@ export class UserController {
     }
     const hashedPassword = await hashPassword(payload.password);
     try {
-      const changedPassword = await this.prisma.user.update({
+      const changedPassword = await prisma.user.update({
         where: {
           id: userId.id,
         },
@@ -225,7 +209,7 @@ export class UserController {
     }
     let user: User | null;
     try {
-      user = await this.prisma.user.findUnique({
+      user = await prisma.user.findUnique({
         where: {
           email: email,
         },
@@ -255,7 +239,7 @@ export class UserController {
     const forgotPasswordId = randomUUID();
     const link = generateLink(forgotPasswordId, "forgot-password");
     try {
-      const forgotPass = await this.prisma.forgotPassword.create({
+      const forgotPass = await prisma.forgotPassword.create({
         data: {
           id: forgotPasswordId,
           userId: user.id,
@@ -293,7 +277,7 @@ export class UserController {
     }
     let forgotPassword: ForgotPassword | null;
     try {
-      forgotPassword = await this.prisma.forgotPassword.findUnique({
+      forgotPassword = await prisma.forgotPassword.findUnique({
         where: {
           id: forgotPassId,
         },
@@ -318,7 +302,7 @@ export class UserController {
     }
     try {
       const hashedPassword = await hashPassword(password);
-      const user = await this.prisma.user.update({
+      const user = await prisma.user.update({
         where: {
           id: forgotPassword.userId,
         },

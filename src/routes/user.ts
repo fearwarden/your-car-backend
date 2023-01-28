@@ -2,6 +2,7 @@ require("express-group-routes");
 import { Application, Request, Response } from "express";
 import { UserController } from "../modules/user/user.controller";
 import { isLoggedIn } from "../modules/auth/strategy/passport";
+import { safeParse } from "../utils/safeParse";
 
 export function userRoutes(app: any): Application {
   app.group("/api/v1/user", (router: any) => {
@@ -21,9 +22,7 @@ export function userRoutes(app: any): Application {
     router.post("/reset-password/:id", (req: Request, res: Response) => {
       UserController.resetPassword(req, res);
     });
-    router.post("/update", isLoggedIn, (req: Request, res: Response) => {
-      UserController.update(req, res);
-    });
+    router.post("/update", isLoggedIn, safeParse(UserController.update));
     router.delete("/remove", isLoggedIn, (req: Request, res: Response) => {
       UserController.remove(req, res);
     });
