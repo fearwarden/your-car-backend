@@ -19,7 +19,6 @@ import { AppError } from "../../utils/AppError";
 import { HTTPCodeStatus } from "../../constants/HTTPCodeStatus";
 
 export class UserController {
-
   /**
    * It updates a user's profile
    * @param {Request} req - Request - The request object
@@ -39,7 +38,7 @@ export class UserController {
       data: payload,
     });
     return res
-      .status(202)
+      .status(HTTPCodeStatus.ACCEPTED)
       .send(RESTResponse.createResponse(true, HTTPResponses.OK, { user }));
   }
 
@@ -57,7 +56,7 @@ export class UserController {
       },
     });
     return res
-      .status(202)
+      .status(HTTPCodeStatus.ACCEPTED)
       .send(RESTResponse.createResponse(true, HTTPResponses.OK, {}));
   }
 
@@ -74,7 +73,7 @@ export class UserController {
         id: payload.id,
       },
     });
-    return res.status(201).send(
+    return res.status(HTTPCodeStatus.OK).send(
       RESTResponse.createResponse(true, HTTPResponses.OK, {
         email: user!.email,
         firstName: user!.firstName,
@@ -95,71 +94,36 @@ export class UserController {
   static async changePassword(req: Request, res: Response): Promise<Response> {
     const payload = req.body;
     const userId: any = req.user;
-    let user: User | null;
-    try {
-      changePasswordDto.parse(payload);
-    } catch (error) {
-      return res
-        .status(401)
-        .send(
-          RESTResponse.createResponse(false, HTTPResponses.INVALID_DATA, {})
-        );
-    }
-    try {
-      user = await prisma.user.findUnique({
-        where: {
-          id: userId.id,
-        },
-      });
-    } catch (error) {
-      return res
-        .status(500)
-        .send(
-          RESTResponse.createResponse(
-            false,
-            HTTPResponses.INTERNAL_SERVER_ERROR,
-            {}
-          )
-        );
-    }
+
+    const validation = changePasswordDto.safeParse(payload);
+    if (!validation.success) throw validation.error;
+    const user: User | null = await prisma.user.findUnique({
+      where: {
+        id: userId.id,
+      },
+    });
     const passMatch = await bcrypt.compare(
       payload.currentPassword,
       user!.password
     );
     if (!passMatch) {
-      return res
-        .status(401)
-        .send(
-          RESTResponse.createResponse(
-            false,
-            HTTPResponses.INCORRECT_PASSWORD,
-            {}
-          )
-        );
+      throw new AppError(
+        HTTPResponses.INCORRECT_PASSWORD,
+        HTTPCodeStatus.UNAUTHORIZED
+      );
     }
     const hashedPassword = await hashPassword(payload.password);
-    try {
-      const changedPassword = await prisma.user.update({
-        where: {
-          id: userId.id,
-        },
-        data: {
-          password: hashedPassword,
-        },
-      });
-    } catch (error) {
-      return res
-        .status(500)
-        .send(
-          RESTResponse.createResponse(
-            false,
-            HTTPResponses.INTERNAL_SERVER_ERROR,
-            {}
-          )
-        );
-    }
+
+    const changedPassword = await prisma.user.update({
+      where: {
+        id: userId.id,
+      },
+      data: {
+        password: hashedPassword,
+      },
+    });
     return res
-      .status(201)
+      .status(HTTPCodeStatus.OK)
       .send(RESTResponse.createResponse(true, HTTPResponses.OK, {}));
   }
 
