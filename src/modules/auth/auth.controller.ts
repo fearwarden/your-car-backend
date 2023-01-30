@@ -75,4 +75,11 @@ export class AuthController {
         .send(RESTResponse.createResponse(true, HTTPResponses.OK, {}));
     });
   }
+
+  static async login(req: Request, res: Response): Promise<Response> {
+    const session = req.session;
+    return res
+      .status(201)
+      .send(RESTResponse.createResponse(true, HTTPResponses.OK, { session }));
+  }
 }

@@ -2,8 +2,6 @@ require("express-group-routes");
 import { Application, Request, Response } from "express";
 import { AuthController } from "../modules/auth/auth.controller";
 import passport from "passport";
-import RESTResponse from "../utils/RESTResponse";
-import { HTTPResponses } from "../constants/HTTPResponses";
 import { safeParse } from "../utils/safeParse";
 
 export function authRoutes(app: any): Application {
@@ -14,14 +12,7 @@ export function authRoutes(app: any): Application {
     router.post(
       "/login",
       passport.authenticate("local"),
-      (req: Request, res: Response) => {
-        const session = req.session;
-        return res
-          .status(201)
-          .send(
-            RESTResponse.createResponse(true, HTTPResponses.OK, { session })
-          );
-      }
+      safeParse(AuthController.login)
     );
 
     router.group("/auth", (subRouter: any) => {
