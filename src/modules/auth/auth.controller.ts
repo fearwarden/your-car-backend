@@ -58,6 +58,19 @@ export class AuthController {
   }
 
   /**
+   * This function is called when a user logs in. It sets the session variable to the user's session.
+   * @param {Request} req - Request - The request object
+   * @param {Response} res - Response - The response object
+   * @returns The session object.
+   */
+  static async login(req: Request, res: Response): Promise<Response> {
+    const session = req.session;
+    return res
+      .status(201)
+      .send(RESTResponse.createResponse(true, HTTPResponses.OK, { session }));
+  }
+
+  /**
    * It logs out the user
    * @param {Request} req - Request - The request object
    * @param {Response} res - Response - The response object that will be sent back to the client
@@ -74,12 +87,5 @@ export class AuthController {
         .status(201)
         .send(RESTResponse.createResponse(true, HTTPResponses.OK, {}));
     });
-  }
-
-  static async login(req: Request, res: Response): Promise<Response> {
-    const session = req.session;
-    return res
-      .status(201)
-      .send(RESTResponse.createResponse(true, HTTPResponses.OK, { session }));
   }
 }
