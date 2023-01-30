@@ -17,9 +17,7 @@ export function userRoutes(app: any): Application {
       safeParse(UserController.changePassword)
     );
     router.post("/forgot-password", safeParse(UserController.forgotPassword));
-    router.post("/reset-password/:id", (req: Request, res: Response) => {
-      UserController.resetPassword(req, res);
-    });
+    router.post("/reset-password/:id", safeParse(UserController.resetPassword));
     router.post("/update", isLoggedIn, safeParse(UserController.update));
     router.delete("/remove", isLoggedIn, safeParse(UserController.remove));
   });

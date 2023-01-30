@@ -179,61 +179,32 @@ export class UserController {
   static async resetPassword(req: Request, res: Response): Promise<Response> {
     const { password, confirmPassword } = req.body;
     const forgotPassId: string = req.params.id;
-    try {
-      resetPasswordDto.parse({ password, confirmPassword, forgotPassId });
-    } catch (error) {
-      return res
-        .status(401)
-        .send(
-          RESTResponse.createResponse(false, HTTPResponses.INVALID_DATA, {})
-        );
-    }
-    let forgotPassword: ForgotPassword | null;
-    try {
-      forgotPassword = await prisma.forgotPassword.findUnique({
+
+    const validation = resetPasswordDto.safeParse({
+      password,
+      confirmPassword,
+      forgotPassId,
+    });
+    if (!validation.success) throw validation.error;
+
+    const forgotPassword: ForgotPassword | null =
+      await prisma.forgotPassword.findUnique({
         where: {
           id: forgotPassId,
         },
       });
-      if (!forgotPassword) {
-        return res
-          .status(400)
-          .send(
-            RESTResponse.createResponse(false, HTTPResponses.BAD_REQUEST, {})
-          );
-      }
-    } catch (error) {
-      return res
-        .status(500)
-        .send(
-          RESTResponse.createResponse(
-            false,
-            HTTPResponses.INTERNAL_SERVER_ERROR,
-            {}
-          )
-        );
+    if (!forgotPassword) {
+      throw new AppError(HTTPResponses.BAD_REQUEST, HTTPCodeStatus.BAD_REQUEST);
     }
-    try {
-      const hashedPassword = await hashPassword(password);
-      const user = await prisma.user.update({
-        where: {
-          id: forgotPassword.userId,
-        },
-        data: {
-          password: hashedPassword,
-        },
-      });
-    } catch (error) {
-      return res
-        .status(500)
-        .send(
-          RESTResponse.createResponse(
-            false,
-            HTTPResponses.INTERNAL_SERVER_ERROR,
-            {}
-          )
-        );
-    }
+    const hashedPassword: string = await hashPassword(password);
+    const user: User | null = await prisma.user.update({
+      where: {
+        id: forgotPassword.userId,
+      },
+      data: {
+        password: hashedPassword,
+      },
+    });
     return res
       .status(201)
       .send(RESTResponse.createResponse(true, HTTPResponses.OK, {}));
