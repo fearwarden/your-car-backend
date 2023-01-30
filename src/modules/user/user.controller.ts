@@ -136,58 +136,33 @@ export class UserController {
    */
   static async forgotPassword(req: Request, res: Response): Promise<Response> {
     const { email } = req.body;
-    try {
-      forgotPasswordDto.parse({ email });
-    } catch (error) {
-      return res
-        .status(401)
-        .send(
-          RESTResponse.createResponse(false, HTTPResponses.INVALID_DATA, {})
-        );
+
+    const validation = forgotPasswordDto.safeParse({ email });
+    if (!validation.success) throw validation.error;
+
+    const user: User | null = await prisma.user.findUnique({
+      where: {
+        email: email,
+      },
+    });
+    if (!user) {
+      throw new AppError(
+        HTTPResponses.USER_DOES_NOT_EXIST,
+        HTTPCodeStatus.USER_DOES_NOT_EXIST
+      );
     }
-    let user: User | null;
-    try {
-      user = await prisma.user.findUnique({
-        where: {
-          email: email,
-        },
-      });
-      if (!user) {
-        return res
-          .status(404)
-          .send(
-            RESTResponse.createResponse(
-              false,
-              HTTPResponses.USER_DOES_NOT_EXIST,
-              {}
-            )
-          );
-      }
-    } catch (error) {
-      return res
-        .status(500)
-        .send(
-          RESTResponse.createResponse(
-            false,
-            HTTPResponses.INTERNAL_SERVER_ERROR,
-            {}
-          )
-        );
-    }
+
     const forgotPasswordId = randomUUID();
     const link = generateLink(forgotPasswordId, "forgot-password");
-    try {
-      const forgotPass = await prisma.forgotPassword.create({
-        data: {
-          id: forgotPasswordId,
-          userId: user.id,
-        },
-      });
-      sendMail(process.env.SMTP_USER!, email, "Forgot Password", link);
-    } catch (error) {
-      console.log(error);
-      return res.send("error");
-    }
+
+    const forgotPass = await prisma.forgotPassword.create({
+      data: {
+        id: forgotPasswordId,
+        userId: user.id,
+      },
+    });
+    sendMail(process.env.SMTP_USER!, email, "Forgot Password", link);
+
     return res
       .status(201)
       .send(RESTResponse.createResponse(true, HTTPResponses.OK, { link }));
