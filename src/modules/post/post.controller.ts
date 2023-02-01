@@ -103,111 +103,39 @@ export class PostController {
    */
   static async getPost(req: Request, res: Response): Promise<Response> {
     const postId = req.params.id;
-    try {
-      getPostDto.parse({ postId });
-    } catch (error) {
-      return res
-        .status(401)
-        .send(
-          RESTResponse.createResponse(false, HTTPResponses.INVALID_DATA, {})
-        );
-    }
+    const validation = getPostDto.safeParse({ postId });
+    if (!validation.success) throw validation.error;
 
-    let post;
-    try {
-      post = await prisma.post.findUnique({
-        where: {
-          id: postId,
-        },
-      });
-    } catch (error) {
-      console.log(error);
-      return res
-        .status(500)
-        .send(
-          RESTResponse.createResponse(
-            false,
-            HTTPResponses.INTERNAL_SERVER_ERROR,
-            {}
-          )
-        );
-    }
-    let price;
-    try {
-      price = await prisma.price.findUnique({
-        where: {
-          id: post?.priceId,
-        },
-      });
-    } catch (error) {
-      console.log(error);
-      return res
-        .status(500)
-        .send(
-          RESTResponse.createResponse(
-            false,
-            HTTPResponses.INTERNAL_SERVER_ERROR,
-            {}
-          )
-        );
-    }
-    let car;
-    try {
-      car = await prisma.car.findUnique({
-        where: {
-          id: post?.carId,
-        },
-      });
-    } catch (error) {
-      console.log(error);
-      return res
-        .status(500)
-        .send(
-          RESTResponse.createResponse(
-            false,
-            HTTPResponses.INTERNAL_SERVER_ERROR,
-            {}
-          )
-        );
-    }
-    let mediaInPost;
-    try {
-      mediaInPost = await prisma.mediaInPost.findMany({
-        where: {
-          postId: post?.id,
-        },
-      });
-    } catch (error) {
-      console.log(error);
-      return res
-        .status(500)
-        .send(
-          RESTResponse.createResponse(
-            false,
-            HTTPResponses.INTERNAL_SERVER_ERROR,
-            {}
-          )
-        );
-    }
-    let medias;
-    try {
-      medias = await prisma.$transaction(
-        mediaInPost.map((media) =>
-          prisma.media.findUnique({ where: { id: media.mediaId } })
-        )
-      );
-    } catch (error) {
-      console.log(error);
-      return res
-        .status(500)
-        .send(
-          RESTResponse.createResponse(
-            false,
-            HTTPResponses.INTERNAL_SERVER_ERROR,
-            {}
-          )
-        );
-    }
+    const post = await prisma.post.findUnique({
+      where: {
+        id: postId,
+      },
+    });
+
+    const price = await prisma.price.findUnique({
+      where: {
+        id: post?.priceId,
+      },
+    });
+
+    const car = await prisma.car.findUnique({
+      where: {
+        id: post?.carId,
+      },
+    });
+
+    const mediaInPost = await prisma.mediaInPost.findMany({
+      where: {
+        postId: post?.id,
+      },
+    });
+
+    const medias = await prisma.$transaction(
+      mediaInPost.map((media) =>
+        prisma.media.findUnique({ where: { id: media.mediaId } })
+      )
+    );
+
     return res.status(202).send(
       RESTResponse.createResponse(true, HTTPResponses.OK, {
         post,
