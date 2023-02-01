@@ -147,90 +147,24 @@ export class PostController {
     );
   }
 
-  // TODO: Implement pagination
+  // TODO: Implement pagination and function to group post with other models (finish allPostsObject function)
   static async getAllPosts(req: Request, res: Response): Promise<Response> {
-    let posts: any;
-    try {
-      posts = await prisma.post.findMany();
-    } catch (error) {
-      console.log(error);
-      return res
-        .status(500)
-        .send(
-          RESTResponse.createResponse(
-            false,
-            HTTPResponses.INTERNAL_SERVER_ERROR,
-            {}
-          )
-        );
-    }
-    let prices;
-    try {
-      prices = await prisma.price.findMany();
-    } catch (error) {
-      console.log(error);
-      return res
-        .status(500)
-        .send(
-          RESTResponse.createResponse(
-            false,
-            HTTPResponses.INTERNAL_SERVER_ERROR,
-            {}
-          )
-        );
-    }
+    const posts = await prisma.post.findMany();
+    const prices = await prisma.price.findMany();
+
     let cars: any = [];
-    try {
-      const allCars = await prisma.car.findMany();
-      for (let i = 0; i < posts.length; i++) {
-        for (let j = 0; j < allCars.length; j++) {
-          if (posts[i].carId === allCars[j].id) {
-            cars.push(allCars[j]);
-          }
+    const allCars = await prisma.car.findMany();
+    for (let i = 0; i < posts.length; i++) {
+      for (let j = 0; j < allCars.length; j++) {
+        if (posts[i].carId === allCars[j].id) {
+          cars.push(allCars[j]);
         }
       }
-    } catch (error) {
-      console.log(error);
-      return res
-        .status(500)
-        .send(
-          RESTResponse.createResponse(
-            false,
-            HTTPResponses.INTERNAL_SERVER_ERROR,
-            {}
-          )
-        );
     }
-    let mediaInPosts;
-    try {
-      mediaInPosts = await prisma.mediaInPost.findMany();
-    } catch (error) {
-      console.log(error);
-      return res
-        .status(500)
-        .send(
-          RESTResponse.createResponse(
-            false,
-            HTTPResponses.INTERNAL_SERVER_ERROR,
-            {}
-          )
-        );
-    }
-    let medias;
-    try {
-      medias = await prisma.media.findMany();
-    } catch (error) {
-      console.log(error);
-      return res
-        .status(500)
-        .send(
-          RESTResponse.createResponse(
-            false,
-            HTTPResponses.INTERNAL_SERVER_ERROR,
-            {}
-          )
-        );
-    }
+
+    const mediaInPosts = await prisma.mediaInPost.findMany();
+    const medias = await prisma.media.findMany();
+
     const data = allPostsObject(posts, cars, prices, mediaInPosts, medias);
     return res
       .status(202)
