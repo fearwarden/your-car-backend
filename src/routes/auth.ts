@@ -8,7 +8,6 @@ export function authRoutes(app: any): Application {
   app.group("/api/v1", (router: any) => {
     //Login and register
     router.post("/register", safeParse(AuthController.register));
-
     router.post(
       "/login",
       passport.authenticate("local"),

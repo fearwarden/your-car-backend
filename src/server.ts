@@ -7,6 +7,7 @@ import { authRoutes } from "./routes/auth";
 import { userRoutes } from "./routes/user";
 import FileStore from "session-file-store";
 import path from "path";
+import fileUpload from "express-fileupload";
 
 dotenv.config();
 
@@ -39,13 +40,13 @@ import { errorHandler } from "./middleware/errorHandler";
 
 const port = process.env.PORT === "test" ? 3001 : 3000;
 
+app.use(fileUpload());
 authRoutes(app);
 userRoutes(app);
 postRouter(app);
 
 // error handler middleware
 app.use(errorHandler);
-
 app.listen(port, () => {
   console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
 });
