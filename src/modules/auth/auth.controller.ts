@@ -9,6 +9,7 @@ import { HTTPResponses } from "../../constants/HTTPResponses";
 import { hashPassword } from "../../utils/helperFunctions";
 import { AppError } from "../../utils/AppError";
 import { HTTPCodeStatus } from "../../constants/HTTPCodeStatus";
+import path from "path";
 
 // Prisma client instantiation
 const prisma: PrismaClient = new PrismaClient();
@@ -35,10 +36,25 @@ export class AuthController {
     }
     const hashedPassword = await hashPassword(payload.password);
     let profilePicture: string;
-    if (!payload.profilePicture) {
+    if (!req.files) {
       profilePicture = "/uploads/profiles/avatar.webp";
     } else {
-      profilePicture = payload.profilePicture;
+      const image: any = req.files;
+      let filePath: any;
+      const rootPath: string = process.env.UPLOAD_ROOT_PATH_PROFILE!;
+      Object.keys(image).forEach((key) => {
+        filePath = path.join(rootPath, image[key].name);
+        image[key].mv(filePath, (err: any) => {
+          if (err) {
+            console.log(err);
+            throw new AppError(
+              HTTPResponses.BAD_REQUEST,
+              HTTPCodeStatus.BAD_REQUEST
+            );
+          }
+        });
+      });
+      profilePicture = filePath;
     }
 
     const createdUser: User | null = await prisma.user.create({
