@@ -9,7 +9,7 @@ import { HTTPResponses } from "../../constants/HTTPResponses";
 import { hashPassword } from "../../utils/helperFunctions";
 import { AppError } from "../../utils/AppError";
 import { HTTPCodeStatus } from "../../constants/HTTPCodeStatus";
-import path from "path";
+import { handleProfilePicture } from "../../utils/fileSystem/profilePicture";
 
 // Prisma client instantiation
 const prisma: PrismaClient = new PrismaClient();
@@ -23,6 +23,7 @@ export class AuthController {
    */
   static async register(req: Request, res: Response): Promise<Response> {
     const payload = req.body;
+    const image: any = req.files;
     const validation = RegisterDto.safeParse(payload);
     if (!validation.success) throw validation.error;
 
@@ -36,25 +37,10 @@ export class AuthController {
     }
     const hashedPassword = await hashPassword(payload.password);
     let profilePicture: string;
-    if (!req.files) {
+    if (!image) {
       profilePicture = "/uploads/profiles/avatar.webp";
     } else {
-      const image: any = req.files;
-      let filePath: any;
-      const rootPath: string = process.env.UPLOAD_ROOT_PATH_PROFILE!;
-      Object.keys(image).forEach((key) => {
-        filePath = path.join(rootPath, image[key].name);
-        image[key].mv(filePath, (err: any) => {
-          if (err) {
-            console.log(err);
-            throw new AppError(
-              HTTPResponses.BAD_REQUEST,
-              HTTPCodeStatus.BAD_REQUEST
-            );
-          }
-        });
-      });
-      profilePicture = filePath;
+      profilePicture = handleProfilePicture(image);
     }
 
     const createdUser: User | null = await prisma.user.create({
