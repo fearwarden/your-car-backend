@@ -1,6 +1,7 @@
 // Packages
 import { Request, Response } from "express";
 import { PrismaClient, User } from "@prisma/client";
+import fileUpload from "express-fileupload";
 // DTOs
 import { RegisterDto } from "./dtos/register.dto";
 // Helpers
@@ -23,7 +24,7 @@ export class AuthController {
    */
   static async register(req: Request, res: Response): Promise<Response> {
     const payload = req.body;
-    const image: any = req.files;
+    const image: fileUpload.FileArray | null | undefined = req.files;
     const validation = RegisterDto.safeParse(payload);
     if (!validation.success) throw validation.error;
 
