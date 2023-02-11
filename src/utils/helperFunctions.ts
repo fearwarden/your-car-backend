@@ -1,12 +1,12 @@
 import { Car, MediaInPost, Post, Price, Media } from "@prisma/client";
 import * as bcrypt from "bcrypt";
 
-export async function hashPassword(password: string) {
+export async function hashPassword(password: string): Promise<string> {
   const salt = await bcrypt.genSalt();
   return bcrypt.hash(password, salt);
 }
 
-export function generateLink(id: string, action: string) {
+export function generateLink(id: string, action: string): string {
   const link = `${process.env.WEBSITE_URL}/${action}/${id}`;
   return link;
 }

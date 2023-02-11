@@ -3,7 +3,7 @@ import { AppError } from "../AppError";
 import { HTTPResponses } from "../../constants/HTTPResponses";
 import { HTTPCodeStatus } from "../../constants/HTTPCodeStatus";
 
-export function handleProfilePicture(image: any) {
+export function handleProfilePicture(image: any): string {
   let filePath: any;
   const rootPath: string = process.env.UPLOAD_ROOT_PATH_PROFILE!;
   Object.keys(image).forEach((key) => {

@@ -36,7 +36,7 @@ export class AuthController {
     if (user) {
       throw new AppError(HTTPResponses.USER_EXIST, HTTPCodeStatus.USER_EXIST);
     }
-    const hashedPassword = await hashPassword(payload.password);
+    const hashedPassword: string = await hashPassword(payload.password);
     let profilePicture: string;
     if (!image) {
       profilePicture = "/uploads/profiles/avatar.webp";
