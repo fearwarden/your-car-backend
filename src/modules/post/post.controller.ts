@@ -148,6 +148,8 @@ export class PostController {
   }
 
   // TODO: Implement pagination and function to group post with other models (finish allPostsObject function)
+  // allPostsObject grupise sve modele posta iz baze u pripadajuci objekat
+  // sve povezane modela jedne sa drugim
   static async getAllPosts(req: Request, res: Response): Promise<Response> {
     const posts = await prisma.post.findMany();
     const prices = await prisma.price.findMany();
