@@ -152,8 +152,8 @@ export class UserController {
       );
     }
 
-    const forgotPasswordId = randomUUID();
-    const link = generateLink(forgotPasswordId, "forgot-password");
+    const forgotPasswordId: string = randomUUID();
+    const link: string = generateLink(forgotPasswordId, "forgot-password");
 
     const forgotPass = await prisma.forgotPassword.create({
       data: {
