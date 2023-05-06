@@ -1,6 +1,6 @@
 // Packges
 import { Request, Response } from "express";
-import { Post, Price, PrismaClient } from "@prisma/client";
+import { Post, Price, PrismaClient, Car } from "@prisma/client";
 import { createPostDto } from "./dto/createPost.dto";
 import RESTResponse from "../../utils/RESTResponse";
 import { HTTPResponses } from "../../constants/HTTPResponses";
@@ -19,7 +19,7 @@ export class PostController {
     const validation = createPostDto.safeParse(payload);
     if (!validation.success) throw validation.error;
 
-    const car: any = await prisma.car.findFirst({
+    const car: Car | null = await prisma.car.findFirst({
       where: {
         brand: payload.brand,
         model: payload.model,
@@ -60,7 +60,7 @@ export class PostController {
         year: payload.year,
         mileage: payload.mileage,
         priceId: price.id,
-        carId: car.id,
+        carId: car!.id,
         userId: userId.id,
       },
     });
