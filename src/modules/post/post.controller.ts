@@ -22,7 +22,9 @@ export class PostController {
     const validation = createPostDto.safeParse(payload);
     if (!validation.success) throw validation.error;
 
-    /*if (payload.used === "true") {
+    // TODO: when front is finished, delete this piece of logic, its only because of postman
+    // also change vlaidation in `createPostDto`
+    if (payload.used === "true") {
       payload.used = true;
     } else {
       payload.used = false;
@@ -32,7 +34,7 @@ export class PostController {
       payload.fixed = true;
     } else {
       payload.fixed = false;
-    }*/
+    }
 
     const car: Car | null = await prisma.car.findFirst({
       where: {
@@ -171,9 +173,32 @@ export class PostController {
   // allPostsObject grupise sve modele posta iz baze u pripadajuci objekat
   // sve povezane modela jedne sa drugim
   static async getAllPosts(req: Request, res: Response): Promise<Response> {
-    const { lastCursor } = req.query;
-    const posts = await prisma.post.findMany();
-    const prices = await prisma.price.findMany();
+    const { lastCursor, items } = req.query;
+
+    const numberOfPosts =
+      typeof items === "string" ? parseInt(items, 10) || 10 : 10;
+    let parsedLastCursor =
+      typeof lastCursor === "string" ? lastCursor : undefined;
+
+    console.log(numberOfPosts, parsedLastCursor);
+
+    let posts: Post[];
+    if (parsedLastCursor) {
+      posts = await prisma.post.findMany({
+        take: numberOfPosts,
+        skip: 0,
+        cursor: {
+          cursor: parsedLastCursor,
+        },
+      });
+    } else {
+      posts = await prisma.post.findMany({
+        take: numberOfPosts,
+        skip: 0,
+      });
+    }
+
+    /*const prices = await prisma.price.findMany();
 
     let cars: any = [];
     const allCars = await prisma.car.findMany();
@@ -188,9 +213,9 @@ export class PostController {
     const mediaInPosts = await prisma.mediaInPost.findMany();
     const medias = await prisma.media.findMany();
 
-    const data = allPostsObject(posts, cars, prices, mediaInPosts, medias);
+    const data = allPostsObject(posts, cars, prices, mediaInPosts, medias);*/
     return res
       .status(202)
-      .send(RESTResponse.createResponse(true, HTTPResponses.OK, {}));
+      .send(RESTResponse.createResponse(true, HTTPResponses.OK, { posts }));
   }
 }
