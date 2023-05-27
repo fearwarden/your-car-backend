@@ -9,6 +9,7 @@ import { getPostDto } from "./dto/getPost.dto";
 import { allPostsObject } from "../../utils/helperFunctions";
 import fileUpload from "express-fileupload";
 import { handlePostPictures } from "../../utils/fileSystem/postPictures";
+import { v4 as uuid } from "uuid";
 
 const prisma: PrismaClient = new PrismaClient();
 
@@ -21,7 +22,7 @@ export class PostController {
     const validation = createPostDto.safeParse(payload);
     if (!validation.success) throw validation.error;
 
-    /*if (payload.used === "true") {
+    if (payload.used === "true") {
       payload.used = true;
     } else {
       payload.used = false;
@@ -31,7 +32,7 @@ export class PostController {
       payload.fixed = true;
     } else {
       payload.fixed = false;
-    }*/
+    }
 
     const car: Car | null = await prisma.car.findFirst({
       where: {
@@ -67,6 +68,8 @@ export class PostController {
       )
     );
 
+    const cursorId = uuid();
+
     const post: Post | null = await prisma.post.create({
       data: {
         description: payload.description,
@@ -76,6 +79,7 @@ export class PostController {
         priceId: price.id,
         carId: car!.id,
         userId: userId.id,
+        cursor: cursorId,
       },
     });
 
@@ -167,6 +171,7 @@ export class PostController {
   // allPostsObject grupise sve modele posta iz baze u pripadajuci objekat
   // sve povezane modela jedne sa drugim
   static async getAllPosts(req: Request, res: Response): Promise<Response> {
+    const { lastCursor } = req.query;
     const posts = await prisma.post.findMany();
     const prices = await prisma.price.findMany();
 
@@ -186,6 +191,6 @@ export class PostController {
     const data = allPostsObject(posts, cars, prices, mediaInPosts, medias);
     return res
       .status(202)
-      .send(RESTResponse.createResponse(true, HTTPResponses.OK, data));
+      .send(RESTResponse.createResponse(true, HTTPResponses.OK, {}));
   }
 }

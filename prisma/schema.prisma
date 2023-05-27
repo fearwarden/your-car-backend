@@ -39,7 +39,7 @@ model Post {
   car         Car           @relation(fields: [carId], references: [id])
   price       Price         @relation(fields: [priceId], references: [id])
   user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-
+  cursor String @unique @db.VarChar(36)
   @@index([userId], map: "posts_user_id_fkey")
   @@index([carId], map: "posts_car_id_fkey")
   @@map("posts")

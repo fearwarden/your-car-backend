@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const createPostDto = z.object({
+/*export const createPostDto = z.object({
   description: z.string(),
   country: z.string(),
   year: z.number(),
@@ -15,6 +15,27 @@ export const createPostDto = z.object({
   drivetrain: z.string(),
   engine: z.string(),
   horsePower: z.number(),
+  transmission: z.string(),
+  fuelType: z.string(),
+  exteriorColor: z.string(),
+  interiorColor: z.string(),
+});*/
+
+export const createPostDto = z.object({
+  description: z.string(),
+  country: z.string(),
+  year: z.string(),
+  mileage: z.string(),
+  price: z.string(),
+  currency: z.string(),
+  fixed: z.string(),
+  brand: z.string(),
+  model: z.string(),
+  used: z.string(),
+  bodyType: z.string(),
+  drivetrain: z.string(),
+  engine: z.string(),
+  horsePower: z.string(),
   transmission: z.string(),
   fuelType: z.string(),
   exteriorColor: z.string(),
