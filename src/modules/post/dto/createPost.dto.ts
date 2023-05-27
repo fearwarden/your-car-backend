@@ -8,7 +8,6 @@ export const createPostDto = z.object({
   price: z.string(),
   currency: z.string(),
   fixed: z.boolean(),
-  imagePaths: z.array(z.string()),
   brand: z.string(),
   model: z.string(),
   used: z.boolean(),

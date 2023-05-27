@@ -8,4 +8,5 @@ export class HTTPResponses {
   static readonly INVALID_USER = "Invalid user credentials.";
   static readonly UNAUTHORIZED = "Unauthorized.";
   static readonly INCORRECT_PASSWORD = "Incorrect password.";
+  static readonly IMAGE_ALREADY_EXIST = "Image already exist in that folder.";
 }

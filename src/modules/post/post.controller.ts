@@ -7,17 +7,31 @@ import { HTTPResponses } from "../../constants/HTTPResponses";
 import { MediaInPostInterface, MediaInterface } from "./dto/media.interface";
 import { getPostDto } from "./dto/getPost.dto";
 import { allPostsObject } from "../../utils/helperFunctions";
+import fileUpload from "express-fileupload";
+import { handlePostPictures } from "../../utils/fileSystem/postPictures";
 
 const prisma: PrismaClient = new PrismaClient();
 
 export class PostController {
   // TODO: Treba ubaciti logiku i implementaciju za priority slika
-  // TODO: Treba implementirati i upload slika (cuvati u uploads folderu)
   static async create(req: Request, res: Response): Promise<Response> {
     const payload = req.body;
+    const images: any = req.files;
     const userId: any = req.user;
     const validation = createPostDto.safeParse(payload);
     if (!validation.success) throw validation.error;
+
+    /*if (payload.used === "true") {
+      payload.used = true;
+    } else {
+      payload.used = false;
+    }
+
+    if (payload.fixed === "true") {
+      payload.fixed = true;
+    } else {
+      payload.fixed = false;
+    }*/
 
     const car: Car | null = await prisma.car.findFirst({
       where: {
@@ -27,7 +41,7 @@ export class PostController {
         bodyType: payload.bodyType,
         drivetrain: payload.drivetrain,
         engine: payload.engine,
-        horsePower: payload.horsePower,
+        horsePower: parseInt(payload.horsePower),
         transmission: payload.transmission,
         fuelType: payload.fuelType,
         exteriorColor: payload.exteriorColor,
@@ -43,21 +57,21 @@ export class PostController {
       },
     });
 
-    let images: MediaInterface[] = [];
-    payload.imagePaths.map((image: string) => {
-      images.push({
-        path: image,
-      });
-    });
     const media: any = await prisma.$transaction(
-      images.map((image) => prisma.media.create({ data: image }))
+      images.image.map((image: any) =>
+        prisma.media.create({
+          data: {
+            path: image.name,
+          },
+        })
+      )
     );
 
     const post: Post | null = await prisma.post.create({
       data: {
         description: payload.description,
         country: payload.country,
-        year: payload.year,
+        year: parseInt(payload.year),
         mileage: payload.mileage,
         priceId: price.id,
         carId: car!.id,
@@ -78,6 +92,8 @@ export class PostController {
     const mediaInPost = await prisma.mediaInPost.createMany({
       data: imagePriority,
     });
+
+    handlePostPictures(images, userId.id, post.id);
     return res
       .status(201)
       .send(RESTResponse.createResponse(true, HTTPResponses.OK, { post }));
