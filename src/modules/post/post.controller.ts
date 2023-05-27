@@ -22,7 +22,7 @@ export class PostController {
     const validation = createPostDto.safeParse(payload);
     if (!validation.success) throw validation.error;
 
-    if (payload.used === "true") {
+    /*if (payload.used === "true") {
       payload.used = true;
     } else {
       payload.used = false;
@@ -32,7 +32,7 @@ export class PostController {
       payload.fixed = true;
     } else {
       payload.fixed = false;
-    }
+    }*/
 
     const car: Car | null = await prisma.car.findFirst({
       where: {

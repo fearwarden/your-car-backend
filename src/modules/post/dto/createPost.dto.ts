@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-/*export const createPostDto = z.object({
+export const createPostDto = z.object({
   description: z.string(),
   country: z.string(),
   year: z.number(),
@@ -19,9 +19,9 @@ import { z } from "zod";
   fuelType: z.string(),
   exteriorColor: z.string(),
   interiorColor: z.string(),
-});*/
+});
 
-export const createPostDto = z.object({
+/*export const createPostDto = z.object({
   description: z.string(),
   country: z.string(),
   year: z.string(),
@@ -41,3 +41,4 @@ export const createPostDto = z.object({
   exteriorColor: z.string(),
   interiorColor: z.string(),
 });
+*/
