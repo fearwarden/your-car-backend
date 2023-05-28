@@ -15,9 +15,9 @@ export function generateLink(id: string, action: string): string {
 export function allPostsObject(
   posts: Post[],
   cars: Car[],
-  prices: Price[],
-  mediaInPosts: MediaInPost[],
-  medias: Media[]
+  prices: (Price | null)[],
+  mediaInPosts: MediaInPost[][],
+  medias: Media[][]
 ) {
   return {
     posts,

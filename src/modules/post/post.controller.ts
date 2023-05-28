@@ -1,6 +1,13 @@
 // Packges
 import { Request, Response } from "express";
-import { Post, Price, PrismaClient, Car } from "@prisma/client";
+import {
+  Post,
+  Price,
+  PrismaClient,
+  Car,
+  MediaInPost,
+  Media,
+} from "@prisma/client";
 import { createPostDto } from "./dto/createPost.dto";
 import RESTResponse from "../../utils/RESTResponse";
 import { HTTPResponses } from "../../constants/HTTPResponses";
@@ -180,8 +187,6 @@ export class PostController {
     let parsedLastCursor =
       typeof lastCursor === "string" ? lastCursor : undefined;
 
-    console.log(numberOfPosts, parsedLastCursor);
-
     let posts: Post[];
     if (parsedLastCursor) {
       posts = await prisma.post.findMany({
@@ -198,7 +203,15 @@ export class PostController {
       });
     }
 
-    /*const prices = await prisma.price.findMany();
+    const prices: (Price | null)[] = await prisma.$transaction(
+      posts.map((post) =>
+        prisma.price.findFirst({
+          where: {
+            post: post,
+          },
+        })
+      )
+    );
 
     let cars: any = [];
     const allCars = await prisma.car.findMany();
@@ -210,12 +223,35 @@ export class PostController {
       }
     }
 
-    const mediaInPosts = await prisma.mediaInPost.findMany();
-    const medias = await prisma.media.findMany();
-
-    const data = allPostsObject(posts, cars, prices, mediaInPosts, medias);*/
+    const mediaInPosts: MediaInPost[][] = await prisma.$transaction(
+      posts.map((post: Post) =>
+        prisma.mediaInPost.findMany({
+          where: {
+            post: post,
+          },
+        })
+      )
+    );
+    let medias: (Media[] | null)[] = [];
+    await Promise.all(
+      mediaInPosts.map(async (media) => {
+        const result = await prisma.$transaction(
+          media.map((item) =>
+            prisma.media.findMany({
+              where: {
+                mediaInPost: item,
+              },
+            })
+          )
+        );
+        medias = [...medias, ...result];
+      })
+    );
+    console.log(medias);
+    // TODO filter all data
+    //const data = allPostsObject(posts, cars, prices, mediaInPosts, medias);
     return res
       .status(202)
-      .send(RESTResponse.createResponse(true, HTTPResponses.OK, { posts }));
+      .send(RESTResponse.createResponse(true, HTTPResponses.OK, {}));
   }
 }
