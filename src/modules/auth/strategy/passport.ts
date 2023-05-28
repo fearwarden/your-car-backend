@@ -56,6 +56,10 @@ passport.deserializeUser(async (id: string | number, done) => {
  * Login middleware
  * */
 export const isLoggedIn = (req: Request, res: Response, next: NextFunction) => {
+  if (req.path === "/api/v1/login" || req.path === "/api/v1/register") {
+    return next();
+  }
+
   if (req.isAuthenticated()) return next();
 
   return res
