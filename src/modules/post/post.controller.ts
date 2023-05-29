@@ -8,15 +8,16 @@ import {
   MediaInPost,
   Media,
 } from "@prisma/client";
+import { v4 as uuid } from "uuid";
+// DTOs
 import { createPostDto } from "./dto/createPost.dto";
+import { getPostDto } from "./dto/getPost.dto";
+import { MediaInPostInterface, MediaInterface } from "./dto/media.interface";
+// Helpers
 import RESTResponse from "../../utils/RESTResponse";
 import { HTTPResponses } from "../../constants/HTTPResponses";
-import { MediaInPostInterface, MediaInterface } from "./dto/media.interface";
-import { getPostDto } from "./dto/getPost.dto";
 import { allPostsObject } from "../../utils/helperFunctions";
-import fileUpload from "express-fileupload";
 import { handlePostPictures } from "../../utils/fileSystem/postPictures";
-import { v4 as uuid } from "uuid";
 
 const prisma: PrismaClient = new PrismaClient();
 
