@@ -11,19 +11,28 @@ export function generateLink(id: string, action: string): string {
   return link;
 }
 
-// TODO: finish filtering function
 export function allPostsObject(
   posts: Post[],
   cars: Car[],
   prices: (Price | null)[],
   mediaInPosts: MediaInPost[][],
-  medias: Media[][]
+  medias: (Media[] | null)[]
 ) {
-  return {
-    posts,
-    cars,
-    prices,
-    mediaInPosts,
-    medias,
-  };
+  return posts.map((post, i) => {
+    const postMediaInPosts = mediaInPosts[i];
+    const postMedias = medias.flat(); // Flatten medias array
+
+    // Create a new array of medias where each media corresponds to a mediaInPost
+    const correspondingMedias = postMediaInPosts.map((mediaInPost) => {
+      return postMedias.find((media) => media!.id === mediaInPost.mediaId);
+    });
+
+    return {
+      post: post,
+      car: cars[i],
+      price: prices[i],
+      mediaInPosts: postMediaInPosts,
+      medias: correspondingMedias,
+    };
+  });
 }

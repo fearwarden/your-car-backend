@@ -177,9 +177,6 @@ export class PostController {
     );
   }
 
-  // TODO: Implement pagination and function to group post with other models (finish allPostsObject function)
-  // allPostsObject grupise sve modele posta iz baze u pripadajuci objekat
-  // sve povezane modela jedne sa drugim
   static async getAllPosts(req: Request, res: Response): Promise<Response> {
     const { lastCursor, items } = req.query;
 
@@ -250,9 +247,9 @@ export class PostController {
     );
     console.log(medias);
     // TODO filter all data
-    //const data = allPostsObject(posts, cars, prices, mediaInPosts, medias);
+    const data = allPostsObject(posts, cars, prices, mediaInPosts, medias);
     return res
       .status(202)
-      .send(RESTResponse.createResponse(true, HTTPResponses.OK, {}));
+      .send(RESTResponse.createResponse(true, HTTPResponses.OK, { data }));
   }
 }
