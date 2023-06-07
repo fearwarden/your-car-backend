@@ -255,8 +255,7 @@ export class PostController {
         medias = [...medias, ...result];
       })
     );
-    console.log(medias);
-    // TODO filter all data
+
     const data = allPostsObject(posts, cars, prices, mediaInPosts, medias);
     return res
       .status(202)
