@@ -16,7 +16,7 @@ import { MediaInPostInterface, MediaInterface } from "./dto/media.interface";
 // Helpers
 import RESTResponse from "../../utils/RESTResponse";
 import { HTTPResponses } from "../../constants/HTTPResponses";
-import { allPostsObject } from "../../utils/helperFunctions";
+import { filterPosts } from "../../utils/helperFunctions";
 import { handlePostPictures } from "../../utils/fileSystem/postPictures";
 
 const prisma: PrismaClient = new PrismaClient();
@@ -256,7 +256,7 @@ export class PostController {
       })
     );
 
-    const data = allPostsObject(posts, cars, prices, mediaInPosts, medias);
+    const data = filterPosts(posts, cars, prices, mediaInPosts, medias);
     return res
       .status(202)
       .send(RESTResponse.createResponse(true, HTTPResponses.OK, { data }));
