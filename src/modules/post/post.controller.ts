@@ -177,6 +177,16 @@ export class PostController {
     );
   }
 
+  /**
+   * This function retrieves a specified number of posts from a database, along with associated data
+   * such as prices, cars, and media, and returns it in a response object.
+   * @param {Request} req - The request object containing information about the incoming HTTP request.
+   * @param {Response} res - `res` is the response object that will be sent back to the client with the
+   * HTTP response.
+   * @returns a Promise that resolves to a Response object. The Response object contains a status code
+   * of 202 and a JSON object with a boolean value indicating success, an HTTP response message, and a
+   * data object that contains information about posts, cars, prices, mediaInPosts, and medias.
+   */
   static async getAllPosts(req: Request, res: Response): Promise<Response> {
     const { lastCursor, items } = req.query;
 
