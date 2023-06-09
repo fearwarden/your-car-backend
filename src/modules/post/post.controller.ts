@@ -12,7 +12,7 @@ import { v4 as uuid } from "uuid";
 // DTOs
 import { createPostDto } from "./dto/createPost.dto";
 import { getPostDto } from "./dto/getPost.dto";
-import { MediaInPostInterface, MediaInterface } from "./dto/media.interface";
+import { MediaInPostInterface } from "./dto/media.interface";
 // Helpers
 import RESTResponse from "../../utils/RESTResponse";
 import { HTTPResponses } from "../../constants/HTTPResponses";
