@@ -280,7 +280,7 @@ export class PostController {
 
     const mediaInPosts: MediaInPost[] = await prisma.mediaInPost.findMany({
       where: {
-        post: post,
+        postId: post.id,
       },
     });
 
