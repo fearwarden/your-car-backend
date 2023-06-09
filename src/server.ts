@@ -38,7 +38,7 @@ import "./modules/auth/strategy/passport";
 import { postRouter } from "./routes/post";
 import { errorHandler } from "./middleware/errorHandler";
 
-const port = process.env.PORT === "test" ? 3001 : 3000;
+const port = process.env.PORT === "test" ? 8081 : 8080;
 
 app.use(fileUpload());
 authRoutes(app);
