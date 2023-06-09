@@ -7,6 +7,7 @@ import {
   Car,
   MediaInPost,
   Media,
+  Prisma,
 } from "@prisma/client";
 import { v4 as uuid } from "uuid";
 // DTOs
@@ -260,5 +261,41 @@ export class PostController {
     return res
       .status(202)
       .send(RESTResponse.createResponse(true, HTTPResponses.OK, { data }));
+  }
+
+  static async deletePost(req: Request, res: Response): Promise<Response> {
+    const postId: string = req.params.id;
+
+    const post: Post = await prisma.post.delete({
+      where: {
+        id: postId,
+      },
+    });
+
+    const price: Price = await prisma.price.delete({
+      where: {
+        id: post.priceId,
+      },
+    });
+
+    const mediaInPosts: MediaInPost[] = await prisma.mediaInPost.findMany({
+      where: {
+        post: post,
+      },
+    });
+
+    const deletedMediaInPosts: MediaInPost[] = await prisma.$transaction(
+      mediaInPosts.map((mediaInPost) =>
+        prisma.mediaInPost.delete({
+          where: {
+            id: mediaInPost.id,
+          },
+        })
+      )
+    );
+
+    //TODO: add to delete medias and images from folder
+
+    return res.status(202).send();
   }
 }
