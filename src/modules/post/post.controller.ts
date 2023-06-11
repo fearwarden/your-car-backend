@@ -270,7 +270,7 @@ export class PostController {
 
   /**
    * This function deletes a post and its associated media and price data from a database.
-   * @param {Request} req - delete request with post id in url.
+   * @param {Request} req - delete request that contains post id within the url.
    * @param {Response} res - The `res` parameter is an instance of the `Response` class from the
    * Express.js framework, which is used to send a response back to the client making the HTTP request.
    * @returns A Promise that resolves to a Response object.
