@@ -5,7 +5,11 @@ import { AppError } from "../AppError";
 import { HTTPResponses } from "../../constants/HTTPResponses";
 import { HTTPCodeStatus } from "../../constants/HTTPCodeStatus";
 
-export function handlePostPictures(images: any, userId: any, postId: string) {
+export function handlePostPictures(
+  images: any,
+  userId: any,
+  postId: string
+): void {
   const rootPath: string = process.env.UPLOAD_ROOT_PATH_POSTS!;
 
   if (!fs.existsSync(rootPath)) {
@@ -33,7 +37,7 @@ export function handlePostPictures(images: any, userId: any, postId: string) {
   }
 }
 
-export function deletePostPictures(userId: string, postId: string) {
+export function deletePostPictures(userId: string, postId: string): void {
   const rootPath: string = process.env.UPLOAD_ROOT_PATH_POSTS!;
   const folderPath = path.join(rootPath, userId, postId);
 
