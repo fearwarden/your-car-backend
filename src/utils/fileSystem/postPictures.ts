@@ -32,3 +32,21 @@ export function handlePostPictures(images: any, userId: any, postId: string) {
     }
   }
 }
+
+export function deletePostPictures(userId: string, postId: string) {
+  const rootPath: string = process.env.UPLOAD_ROOT_PATH_POSTS!;
+  const folderPath = path.join(rootPath, userId, postId);
+
+  if (!fs.existsSync(folderPath)) {
+    throw new AppError(
+      HTTPResponses.INTERNAL_SERVER_ERROR,
+      HTTPCodeStatus.INTERNAL_SERVER_ERROR
+    );
+  }
+  fs.readdirSync(folderPath).forEach((image) => {
+    const currImage = path.join(folderPath, image);
+    fs.unlinkSync(currImage);
+  });
+
+  fs.rmdirSync(folderPath);
+}

@@ -18,7 +18,12 @@ import { MediaInPostInterface } from "./dto/media.interface";
 import RESTResponse from "../../utils/RESTResponse";
 import { HTTPResponses } from "../../constants/HTTPResponses";
 import { filterPosts } from "../../utils/helperFunctions";
-import { handlePostPictures } from "../../utils/fileSystem/postPictures";
+import {
+  handlePostPictures,
+  deletePostPictures,
+} from "../../utils/fileSystem/postPictures";
+import { AppError } from "../../utils/AppError";
+import { HTTPCodeStatus } from "../../constants/HTTPCodeStatus";
 
 const prisma: PrismaClient = new PrismaClient();
 
@@ -32,7 +37,7 @@ export class PostController {
     if (!validation.success) throw validation.error;
 
     // TODO: when front is finished, delete this piece of logic, its only because of postman
-    // also change vlaidation in `createPostDto`
+    // also change validation in `createPostDto`
     if (payload.used === "true") {
       payload.used = true;
     } else {
@@ -265,22 +270,24 @@ export class PostController {
 
   static async deletePost(req: Request, res: Response): Promise<Response> {
     const postId: string = req.params.id;
+    const userId: any = req.user;
 
-    const post: Post = await prisma.post.delete({
+    const findPost = await prisma.post.findFirst({
       where: {
         id: postId,
       },
     });
 
-    const price: Price = await prisma.price.delete({
-      where: {
-        id: post.priceId,
-      },
-    });
+    if (!findPost) {
+      throw new AppError(
+        HTTPResponses.POST_NOT_FOUND,
+        HTTPCodeStatus.NOT_FOUND
+      );
+    }
 
     const mediaInPosts: MediaInPost[] = await prisma.mediaInPost.findMany({
       where: {
-        postId: post.id,
+        postId: postId,
       },
     });
 
@@ -294,7 +301,27 @@ export class PostController {
       )
     );
 
-    //TODO: add to delete medias and images from folder
+    deletedMediaInPosts.map(async (mediaInPost) => {
+      await prisma.media.delete({
+        where: {
+          id: mediaInPost.mediaId,
+        },
+      });
+    });
+
+    const post: Post = await prisma.post.delete({
+      where: {
+        id: postId,
+      },
+    });
+
+    const price: Price = await prisma.price.delete({
+      where: {
+        id: post.priceId,
+      },
+    });
+
+    deletePostPictures(userId.id.toString(), post.id);
 
     return res.status(202).send();
   }
