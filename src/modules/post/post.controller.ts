@@ -268,6 +268,13 @@ export class PostController {
       .send(RESTResponse.createResponse(true, HTTPResponses.OK, { data }));
   }
 
+  /**
+   * This function deletes a post and its associated media and price data from a database.
+   * @param {Request} req - delete request with post id in url.
+   * @param {Response} res - The `res` parameter is an instance of the `Response` class from the
+   * Express.js framework, which is used to send a response back to the client making the HTTP request.
+   * @returns A Promise that resolves to a Response object.
+   */
   static async deletePost(req: Request, res: Response): Promise<Response> {
     const postId: string = req.params.id;
     const userId: any = req.user;
