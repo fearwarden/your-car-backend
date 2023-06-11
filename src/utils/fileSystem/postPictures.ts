@@ -21,7 +21,7 @@ export function handlePostPictures(
 
   const folderWithUserId = path.join(rootPath, userId.toString(), postId);
   fs.mkdirSync(folderWithUserId, { recursive: true }); // recursive: true will create all the necessary parent directories if they don't already exist.
-  console.log(images.image);
+
   for (let i = 0; i < images.image.length; i++) {
     const imageFinalPath = path.join(folderWithUserId, images.image[i].name);
     console.log(imageFinalPath);
