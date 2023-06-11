@@ -24,8 +24,7 @@ export function handlePostPictures(
 
   for (let i = 0; i < images.image.length; i++) {
     const imageFinalPath = path.join(folderWithUserId, images.image[i].name);
-    console.log(imageFinalPath);
-    console.log(images.image[i].data);
+
     try {
       fs.writeFileSync(imageFinalPath, images.image[i].data);
     } catch (error) {
